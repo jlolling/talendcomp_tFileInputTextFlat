@@ -1,0 +1,279 @@
+<%@ jet 
+	imports="
+		org.talend.core.model.process.INode 
+		org.talend.core.model.process.ElementParameterParser 
+		org.talend.core.model.metadata.IMetadataTable 
+		org.talend.core.model.metadata.IMetadataColumn 
+		org.talend.core.model.process.IConnection
+		org.talend.core.model.process.IConnectionCategory
+		org.talend.designer.codegen.config.CodeGeneratorArgument
+		org.talend.core.model.metadata.types.JavaTypesManager
+		org.talend.core.model.metadata.types.JavaType
+		java.util.List
+		java.util.ArrayList
+    	java.util.Map
+    	java.util.HashMap
+	" 
+%>
+
+<% 
+    CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+    INode node = (INode)codeGenArgument.getArgument();
+    String cid = node.getUniqueName();
+    String file = ElementParameterParser.getValue(node, "__FILENAME__");
+    String encoding = ElementParameterParser.getValue(node, "__ENCODING__");
+    String delimiter = ElementParameterParser.getValue(node, "__FIELDSEPARATOR__");
+    String rowsToSkip = ElementParameterParser.getValue(node, "__LINES_TO_SKIP__");
+    String enclosure = ElementParameterParser.getValue(node, "__TEXT_ENCLOSURE__");
+    if ("\"\"\"".equals(enclosure)) {
+    	enclosure = "\"\\\"\"";
+    }
+    String splitRowFirst = ElementParameterParser.getValue(node, "__PARSE_ROW_FIRST__");
+    String numberLocale = ElementParameterParser.getValue(node, "__NUMBER_COUNTRY__");
+    String defaultDateFormat = ElementParameterParser.getValue(node, "__DEFAULT_DATE_FORMAT__");
+    String skipEmptyLines = ElementParameterParser.getValue(node, "__REMOVE_EMPTY_ROW__");
+    String ignoreNotNull = ElementParameterParser.getValue(node, "__IGNORE_NOT_NULL__");
+    boolean trimAll = "true".equals(ElementParameterParser.getValue(node, "__COLUMN_HEADER_LINE__"));
+    boolean hasColumnHeaderLine = "true".equals(ElementParameterParser.getValue(node, "__COLUMN_HEADER_LINE__"));
+    boolean configByHeader = "true".equals(ElementParameterParser.getValue(node, "__CONFIG_DELIMITED_BY_HEADER__"));
+    String useRegexToFindColumnInHeader = ElementParameterParser.getValue(node, "__CONFIG_HEADER_BY_REGEX__");
+	String allowEnclosureInText = ElementParameterParser.getValue(node, "__ALLOW_ENCLUSURE_IN_TEXT__");
+	List<Map<String, String>> importDescList = (List<Map<String,String>>) ElementParameterParser.getObjectValue(node, "__FIELD_CONFIG__");
+	Map<String, String> headerNameMap = new HashMap<String, String>();
+	Map<String, String> posTypeMap = new HashMap<String, String>();
+	Map<String, String> positionMap = new HashMap<String, String>();
+	Map<String, String> lengthMap = new HashMap<String, String>();
+	Map<String, String> regexMap = new HashMap<String, String>();
+	Map<String, String> ignoreMissingMap = new HashMap<String, String>();
+	int columnIndex = 0;
+	for (Map<String, String> fd : importDescList) {
+		String schemaColumn = fd.get("SCHEMA_COLUMN");
+		String columnHeader = fd.get("COLUMN_HEADER_NAME");
+		if (columnHeader != null && columnHeader.isEmpty() == false) {
+			headerNameMap.put(schemaColumn, columnHeader);
+		}
+		String type = fd.get("POSITIONING_TYPE");
+		posTypeMap.put(schemaColumn, type);
+		String pos = fd.get("POSITION");
+		if (pos == null || pos.isEmpty()) {
+		    if ("DEL".equals(type)) {
+				pos = String.valueOf(columnIndex);
+		    } else {
+				pos = "-1";
+		    }
+		}
+		positionMap.put(schemaColumn, pos);
+		String length = fd.get("LENGTH");
+		if (length == null || length.isEmpty()) {
+			length = "0";
+		}
+		lengthMap.put(schemaColumn, length);
+		String regex = fd.get("REGEX");
+		if (regex == null || regex.isEmpty()) {
+			regex = "null";
+		}
+		regexMap.put(schemaColumn, regex);
+		String ignoreMissing = fd.get("IGNORE_IF_MISSING");
+		ignoreMissingMap.put(schemaColumn, ignoreMissing);
+		columnIndex++;
+	}
+	List<Map<String, String>> trimList = (List<Map<String,String>>) ElementParameterParser.getObjectValue(node, "__TRIMSELECT__");
+	Map<String, String> trimMap = new HashMap<String, String>();
+	for (Map<String, String> entry : trimList) {
+		String schemaColumn = entry.get("SCHEMA_COLUMN");
+		String trim = trimAll ? "true" : entry.get("TRIM");
+		trimMap.put(schemaColumn, trim);
+	}
+    String rejectConnName = "";
+	List<? extends IConnection> rejectConns = node.getOutgoingConnections("REJECT");
+	if (rejectConns != null && rejectConns.size() > 0) {
+		IConnection rejectConn = rejectConns.get(0);
+		rejectConnName = rejectConn.getName();
+	}
+    String mainConnName = null;
+    String mainConnector = null;
+	List< ? extends IConnection> conns = node.getOutgoingSortedConnections();
+    for (IConnection conn : conns) {
+    	if (rejectConnName.equals(mainConnName) == false) {
+        	mainConnName = conn.getName();
+    		mainConnector = conn.getConnectorName();
+    		break;
+    	}
+    }
+	List<IMetadataColumn> listColumns = new ArrayList<IMetadataColumn>();
+	IMetadataTable metadata = node.getMetadataFromConnector(mainConnector);
+	if (metadata != null) {
+   		listColumns = metadata.getListColumns();
+	}
+	List<IMetadataColumn> listRejectColumns = new ArrayList<IMetadataColumn>();
+	metadata = node.getMetadataFromConnector("REJECT");
+	if (metadata != null) {
+   		listRejectColumns = metadata.getListColumns();
+	}
+	boolean dieOnError = "true".equals(ElementParameterParser.getValue(node, "__DIE_ON_ERROR__"));
+	String debug = ElementParameterParser.getValue(node, "__DEBUG__");
+%>
+    // <%=mainConnName%> , <%=rejectConnName%>
+	de.cimt.talendcomp.flatfileimport.Importer <%=cid%> = new de.cimt.talendcomp.flatfileimport.Importer();
+	<%=cid%>.setDebug(<%=debug%>);
+	<%=cid%>.setImportFile(<%=file%>);
+	<%=cid%>.setFileCharset(<%=encoding%>);
+	<%=cid%>.setSkipEmptyLines(<%=skipEmptyLines%>);
+	<%=cid%>.setHasHeaderRow(<%=hasColumnHeaderLine%>);
+	<%=cid%>.setIgnoreNotNullConstraints(<%=ignoreNotNull%>);
+<%  if (delimiter != null && delimiter.isEmpty() == false) { %>
+	<%=cid%>.setDelimiter(<%=delimiter%>);
+<%  }
+    if (rowsToSkip != null && rowsToSkip.isEmpty() == false) { %>
+    <%=cid%>.setRowsToSkip(<%=rowsToSkip%>);
+<%  }
+	if (enclosure != null && enclosure.isEmpty() == false) { %>
+	<%=cid%>.setIgnoreLinebreakInEnclosures(!<%=splitRowFirst%>);
+	<%=cid%>.setEnclosure(<%=enclosure%>);
+	<%=cid%>.allowEnclosureInFieldContent(<%=allowEnclosureInText%>);
+<%  } %>
+	// helper to configure fields and get values
+	final class ImportHelper_<%=cid%> {
+	
+		public void configureFields(de.cimt.talendcomp.flatfileimport.Importer importer) {
+<%  for (columnIndex = 0; columnIndex < listColumns.size(); columnIndex++) {
+		IMetadataColumn column = listColumns.get(columnIndex);
+		String columnName = column.getLabel();
+		String header = headerNameMap.get(columnName);
+		column.setComment(header);
+		String type = column.getTalendType().substring(3);
+		String pattern = column.getPattern();
+		String pos = positionMap.get(columnName);
+		String posType = posTypeMap.get(columnName);
+		String length = lengthMap.get(columnName);
+		if (pattern == null || pattern.isEmpty()) {
+			if ("Date".equals(type) || "Timestamp".equals(type)) {
+				pattern = defaultDateFormat;
+			} else {
+				pattern = numberLocale;
+			}
+		}
+		String regex = regexMap.get(columnName);
+		String trim = trimMap.get(columnName);
+		String ignoreIfMissing = ignoreMissingMap.get(columnName);
+		if ("DEL".equals(posType)) { %>
+			importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription.createDelimited("<%=header != null ? header : columnName%>", "<%=type%>", <%=column.isNullable()%>, <%=pos%>, <%=length%>, <%=pattern%>, <%=regex%>, <%=trim%>, <%=ignoreIfMissing%>));
+<%      } else if ("ABS".equals(posType) && "-1".equals(pos)) { %>
+			importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription.createRelativePos("<%=header != null ? header : columnName%>", "<%=type%>", <%=column.isNullable()%>, <%=length%>, <%=pattern%>, <%=regex%>, <%=trim%>));
+<%      } else if ("ABS".equals(posType) && "-1".equals(pos) == false) { %>
+			importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription.createAbsolutePos("<%=header != null ? header : columnName%>", "<%=type%>", <%=column.isNullable()%>, <%=pos%>, <%=length%>, <%=pattern%>, <%=regex%>, <%=trim%>));
+<%      } else { %>
+			// unknown position type: <%=posType%>, sorry this should never happen!
+<%      }
+    } %>
+		} // end of configureFields
+		
+		public void fillOutputFlow(de.cimt.talendcomp.flatfileimport.Importer importer, <%=mainConnName%>Struct flow) throws Exception {
+<%  for (columnIndex = 0; columnIndex < listColumns.size(); columnIndex++) {
+		IMetadataColumn column = listColumns.get(columnIndex);
+		String columnName = column.getLabel();
+		String type = column.getTalendType().substring(3); 
+		if ("String".equals(type)) { %>
+				flow.<%=columnName%> = importer.getStringAt(<%=columnIndex%>, <%=column.isNullable()%>);
+<%      } else if ("Integer".equals(type)) { %>
+				flow.<%=columnName%> = importer.getIntegerAt(<%=columnIndex%>, <%=column.isNullable()%>);
+<%      } else if ("Short".equals(type)) { %>
+				flow.<%=columnName%> = importer.getShortAt(<%=columnIndex%>, <%=column.isNullable()%>);
+<%      } else if ("Long".equals(type)) { %>
+				flow.<%=columnName%> = importer.getLongAt(<%=columnIndex%>, <%=column.isNullable()%>);
+<%      } else if ("BigDecimal".equals(type)) { %>
+				flow.<%=columnName%> = importer.getBigDecimalAt(<%=columnIndex%>, <%=column.isNullable()%>);
+<%      } else if ("Double".equals(type)) { %>
+				flow.<%=columnName%> = importer.getDoubleAt(<%=columnIndex%>, <%=column.isNullable()%>);
+<%      } else if ("Float".equals(type)) { %>
+				flow.<%=columnName%> = importer.getFloatAt(<%=columnIndex%>, <%=column.isNullable()%>);
+<%      } else if ("Boolean".equals(type)) { %>
+				flow.<%=columnName%> = importer.getBooleanAt(<%=columnIndex%>, <%=column.isNullable()%>);
+<%      } else if ("Date".equals(type)) { %>
+				flow.<%=columnName%> = importer.getDateAt(<%=columnIndex%>, <%=column.isNullable()%>);
+<%      } else if ("Timestamp".equals(type)) { %>
+				flow.<%=columnName%> = importer.getTimestampAt(<%=columnIndex%>, <%=column.isNullable()%>);
+<%      } else if ("Character".equals(type)) { %>
+				flow.<%=columnName%> = importer.getCharAt(<%=columnIndex%>, <%=column.isNullable()%>);
+<%      } else { %>
+				flow.<%=columnName%> = importer.getObjectAt(<%=columnIndex%>, <%=column.isNullable()%>);
+<%      } %> 	
+<%  } %>
+		} // end of fillOutputFlow
+	
+	}
+	final ImportHelper_<%=cid%> helper_<%=cid%> = new ImportHelper_<%=cid%>();
+	helper_<%=cid%>.configureFields(<%=cid%>);
+	globalMap.put("<%=cid%>_HEADER_CONFIG_ERROR", false);
+    try {
+    	<%=cid%>.initialize();
+<%  if (rowsToSkip != null && rowsToSkip.isEmpty() == false) { %>
+        <%=cid%>.skipTopRows();
+<%  }
+	if (hasColumnHeaderLine) { %>
+		<%=cid%>.skipHeaderRow();
+<%		if (configByHeader) { %>
+		try {
+			// reconfigure fields, will fail if no header line is set
+			<%=cid%>.setFindHeaderPosByRegex(<%=useRegexToFindColumnInHeader%>);
+			<%=cid%>.reconfigureFieldDescriptionByHeaderLine();
+		} catch (Exception e) {
+			globalMap.put("<%=cid%>_HEADER_CONFIG_ERROR", true);
+			throw e;		
+		}
+<%      } %>
+<%  } %>
+	} catch (Exception e) {
+		<%=cid%>.close(); // close file handle in case of errors
+		globalMap.put("<%=cid%>_ERROR_MESSAGE", e.getMessage());
+		throw e;
+	}
+	int countLinesDelivered_<%=cid%> = 0;
+	int lineNumber_<%=cid%> = -1;
+	int countRejects_<%=cid%> = 0;
+	try {
+		while (true) { // main loop will be closed in end section
+			// retrieve next data set
+			lineNumber_<%=cid%>++;
+			<%=mainConnName%> = new <%=mainConnName%>Struct();
+<%	if (rejectConnName.isEmpty() == false) { %>
+			<%=rejectConnName%> = null;
+<%  } %>
+			try {
+				if (<%=cid%>.nextDataRow() == false) {
+					break;
+				}
+			} catch (Exception e) {
+				String message = "nextDataRow failed in line " + countLinesDelivered_<%=cid%> + ":" + e.getMessage();
+				globalMap.put("<%=cid%>_ERROR_MESSAGE", message);
+				<%=mainConnName%> = null;
+<%  if (dieOnError) { %>
+				<%=cid%>.close(); // close file handle in case of errors
+				throw new Exception(message, e);
+<%  } else {
+		if (rejectConnName.isEmpty() == false) { %>
+				<%=rejectConnName%> = new <%=rejectConnName%>Struct();
+				<%=rejectConnName%>.lineNumber = lineNumber_<%=cid%>;
+				<%=rejectConnName%>.line = <%=cid%>.getCurrentLine();
+				<%=rejectConnName%>.errorMessage = message;
+				countRejects_<%=cid%>++;
+<%      } %>
+<%  } %>
+			}
+			if (<%=mainConnName%> != null) {
+				// retrieve values
+				try {
+					helper_<%=cid%>.fillOutputFlow(<%=cid%>, <%=mainConnName%>);
+				} catch (Exception e) {
+					String message = "fillOutputFlow failed in line " + countLinesDelivered_<%=cid%> + ":" + e.getMessage();
+					globalMap.put("<%=cid%>_ERROR_MESSAGE", message);
+<%  if (dieOnError) { %>
+   					<%=cid%>.close(); // close file handle in case of errors
+					throw new Exception(message, e);
+<%  } else { %>
+					continue;
+<%  } %>
+				}
+			}
+			countLinesDelivered_<%=cid%>++;
+			
