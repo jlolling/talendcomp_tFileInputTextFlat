@@ -33,7 +33,7 @@
     String defaultDateFormat = ElementParameterParser.getValue(node, "__DEFAULT_DATE_FORMAT__");
     String skipEmptyLines = ElementParameterParser.getValue(node, "__REMOVE_EMPTY_ROW__");
     String ignoreNotNull = ElementParameterParser.getValue(node, "__IGNORE_NOT_NULL__");
-    boolean trimAll = "true".equals(ElementParameterParser.getValue(node, "__COLUMN_HEADER_LINE__"));
+    boolean trimAll = "true".equals(ElementParameterParser.getValue(node, "__TRIMALL__"));
     boolean hasColumnHeaderLine = "true".equals(ElementParameterParser.getValue(node, "__COLUMN_HEADER_LINE__"));
     boolean configByHeader = "true".equals(ElementParameterParser.getValue(node, "__CONFIG_DELIMITED_BY_HEADER__"));
     String useRegexToFindColumnInHeader = ElementParameterParser.getValue(node, "__CONFIG_HEADER_BY_REGEX__");
@@ -114,7 +114,7 @@
 	String debug = ElementParameterParser.getValue(node, "__DEBUG__");
 %>
     // <%=mainConnName%> , <%=rejectConnName%>
-	de.cimt.talendcomp.flatfileimport.Importer <%=cid%> = new de.cimt.talendcomp.flatfileimport.Importer();
+	de.jlo.talendcomp.flatfileimport.Importer <%=cid%> = new de.jlo.talendcomp.flatfileimport.Importer();
 	<%=cid%>.setDebug(<%=debug%>);
 	<%=cid%>.setImportFile(<%=file%>);
 	<%=cid%>.setFileCharset(<%=encoding%>);
@@ -135,7 +135,7 @@
 	// helper to configure fields and get values
 	final class ImportHelper_<%=cid%> {
 	
-		public void configureFields(de.cimt.talendcomp.flatfileimport.Importer importer) {
+		public void configureFields(de.jlo.talendcomp.flatfileimport.Importer importer) {
 <%  for (columnIndex = 0; columnIndex < listColumns.size(); columnIndex++) {
 		IMetadataColumn column = listColumns.get(columnIndex);
 		String columnName = column.getLabel();
@@ -157,18 +157,42 @@
 		String trim = trimMap.get(columnName);
 		String ignoreIfMissing = ignoreMissingMap.get(columnName);
 		if ("DEL".equals(posType)) { %>
-			importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription.createDelimited("<%=header != null ? header : columnName%>", "<%=type%>", <%=column.isNullable()%>, <%=pos%>, <%=length%>, <%=pattern%>, <%=regex%>, <%=trim%>, <%=ignoreIfMissing%>));
+			importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription.createDelimited(
+				"<%=header != null ? header : columnName%>", // columnName 
+				"<%=type%>", // type
+				<%=column.isNullable()%>, // nullable 
+				<%=pos%>, // pos
+				<%=length%>, // length
+				<%=pattern%>, // pattern
+				<%=regex%>, // regex
+				<%=trim%>, // trim
+				<%=ignoreIfMissing%>)); // ignoreMissing
 <%      } else if ("ABS".equals(posType) && "-1".equals(pos)) { %>
-			importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription.createRelativePos("<%=header != null ? header : columnName%>", "<%=type%>", <%=column.isNullable()%>, <%=length%>, <%=pattern%>, <%=regex%>, <%=trim%>));
+			importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription.createRelativePos(
+				"<%=header != null ? header : columnName%>", // columnName
+				"<%=type%>", // type
+				<%=column.isNullable()%>, // nullable 
+				<%=length%>, // length
+				<%=pattern%>, // pattern
+				<%=regex%>, // regex
+				<%=trim%>)); // trim
 <%      } else if ("ABS".equals(posType) && "-1".equals(pos) == false) { %>
-			importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription.createAbsolutePos("<%=header != null ? header : columnName%>", "<%=type%>", <%=column.isNullable()%>, <%=pos%>, <%=length%>, <%=pattern%>, <%=regex%>, <%=trim%>));
+			importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription.createAbsolutePos(
+				"<%=header != null ? header : columnName%>", // columnName 
+				"<%=type%>", // type
+				<%=column.isNullable()%>, // nullable 
+				<%=pos%>, // pos
+				<%=length%>, // length
+				<%=pattern%>, // pattern
+				<%=regex%>, // regex
+				<%=trim%>)); // trim
 <%      } else { %>
 			// unknown position type: <%=posType%>, sorry this should never happen!
 <%      }
     } %>
 		} // end of configureFields
 		
-		public void fillOutputFlow(de.cimt.talendcomp.flatfileimport.Importer importer, <%=mainConnName%>Struct flow) throws Exception {
+		public void fillOutputFlow(de.jlo.talendcomp.flatfileimport.Importer importer, <%=mainConnName%>Struct flow) throws Exception {
 <%  for (columnIndex = 0; columnIndex < listColumns.size(); columnIndex++) {
 		IMetadataColumn column = listColumns.get(columnIndex);
 		String columnName = column.getLabel();

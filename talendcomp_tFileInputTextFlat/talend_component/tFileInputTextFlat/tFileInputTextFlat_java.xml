@@ -1,6 +1,6 @@
 <COMPONENT>
-	<HEADER PLATEFORM="ALL" SERIAL="" VERSION="3.3" STATUS="PROD"
-		COMPATIBILITY="ALL" AUTHOR="cimt AG" RELEASE_DATE="20141001A"
+	<HEADER PLATEFORM="ALL" SERIAL="" VERSION="3.4" STATUS="PROD"
+		COMPATIBILITY="ALL" AUTHOR="Jan Lolling" RELEASE_DATE="20141224A"
 		STARTABLE="true" HAS_CONDITIONAL_OUTPUTS="true">
 		<SIGNATURE />
 	</HEADER>
@@ -158,8 +158,8 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT NAME="cimt.talendcomp.flatfileimport"
-				MODULE="cimt.talendcomp.flatfileimport-3.3.jar" REQUIRED="true" />
+			<IMPORT NAME="jlo.talendcomp.flatfileimport"
+				MODULE="jlo.talendcomp.flatfileimport-3.4.jar" REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
 
