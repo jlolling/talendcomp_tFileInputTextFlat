@@ -82,6 +82,9 @@ public final class Util {
 		if (dateString == null || dateString.isEmpty()) {
 			return null;
 		}
+		if (pattern == null) {
+			throw new Exception("pattern cannot be null or empty");
+		}
 		try {
 			SimpleDateFormat sdf = getDateFormat(pattern);
 			Date date = null;

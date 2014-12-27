@@ -1,6 +1,8 @@
 package de.jlo.talendcomp.flatfileimport;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,7 +22,6 @@ public final class Importer {
 	private File inputFile;
 	private DatasetProvider dsp = null;
 	private FieldTokenizer ft = null;
-	private Properties properties;
 	private final ImportAttributes attr = new ImportAttributes();
 	private final List<FieldDescription> fields = new ArrayList<FieldDescription>();
 	private String currentDataset = null;
@@ -76,29 +78,23 @@ public final class Importer {
         return null;
     }
 
-    public void initializeFromProperties() throws Exception {
-		attr.setupFrom(properties);
-	    ArrayList<Integer> listIndexes = collectFieldDescriptionIndexes(properties);
-	    int index = 0;
-	    for (Integer descriptionIndex : listIndexes) {
-	        fields.add(new FieldDescription(index++, descriptionIndex.intValue(), properties));
-	    }
-	    initialize();
-	}
-    
     public void initialize() throws Exception {
     	if (fields.isEmpty()) {
     		throw new Exception("Field description list is empty!");
     	}
-    	for (int d = 0; d < fields.size(); d++) {
-	        FieldDescription fd = fields.get(d);
-	        if (fd.validate() == false) {
-	        	throw new Exception("Field " + fd + " is invalid:" + fd.getErrorMessage());
-	        }
-	        if (fd.getAlternativeFieldDescriptionName() != null) {
-	            fd.setAlternativeFieldDescription(getFieldDescription(fd.getAlternativeFieldDescriptionName()));
-	        }
-	    }
+        for (int d = 0; d < fields.size(); d++) {
+            FieldDescription fd = fields.get(d);
+            if (fd.getAlternativeFieldDescriptionName() != null) {
+                fd.setAlternativeFieldDescription(getFieldDescription(fd.getAlternativeFieldDescriptionName()));
+            }
+            if (fd.validate() == false) {
+                throw new Exception("Check FieldDescription:" + fd.toString() + ":" + fd.getErrorMessage());
+            } else {
+                if (BasicDataType.isNumberType(fd.getBasicTypeId()) && fd.getFieldFormat() == null) {
+                    System.err.println("field " + fd + " has numeric type without defined number locale. This can result in wrong parsing if value is a fraction number");
+                }
+            }
+        }
 		if (inputFile.exists() == false) {
 			throw new Exception("Input file:" + inputFile.getAbsolutePath() + " does not exists");
 		}
@@ -110,15 +106,19 @@ public final class Importer {
 		ft = dsp.createParser(attr);
 		ft.setDebug(debug);
 		if (debug) {
-			System.out.println("Initial set list of field descriptions:" + fields.hashCode());
+			System.out.println("\nInitial set list of field descriptions:");
 			FieldDescription.debugOutFieldDescriptions(fields);
 		}
-		ft.setFieldDescriptions(fields);
+    	sortFieldDescriptions();
 		headerLineSkipped = false;
 	}
 	
 	public void setFileCharset(String charset) {
 		attr.setCharsetName(charset);
+	}
+	
+	public void skipBOM(boolean skip) {
+		attr.setIgnoreBOM(skip);
 	}
 	
 	public void setDelimiter(String delimiter) {
@@ -151,10 +151,6 @@ public final class Importer {
 	
 	public void allowEnclosureInFieldContent(boolean allow) {
 		attr.setAllowEnclosureInText(allow);
-	}
-	
-	public void setConfig(Properties properties) {
-		this.properties = properties;
 	}
 	
 	public void addFieldDescription(FieldDescription fd) {
@@ -245,6 +241,9 @@ public final class Importer {
 	
 	public void reconfigureFieldDescriptionByHeaderLine() throws Exception {
 		if (attr.hasHeaderLine()) {
+			if (debug) {
+				System.out.println("\nConfigure field positions by header line...");
+			}
 			String headerLine = (String) (headerLineSkipped ? currentDataset : dsp.getNextDataset());
 			if (ft.parseHeaderLine(headerLine)) {
 				List<String> headers = ft.getHeaderData();
@@ -259,21 +258,25 @@ public final class Importer {
 					}
 					fd.setDelimPos(pos); // position given by header
 				}
-				sortList(fields);
-				if (debug) {
-					System.out.println("Reordered list of field descriptions:"+fields.hashCode());
-					FieldDescription.debugOutFieldDescriptions(fields);
-				}
-				ft.setFieldDescriptions(fields);
-				for (int i = 0, n = fields.size(); i < n; i++) {
-					FieldDescription fd = fields.get(i);
-					fdIndexMap.put(fd.getIndex(), i);
-				}
+				sortFieldDescriptions();
 			} else {
 				System.err.println("Could not configure fields by header line because there is not header line");
 			}
 		} else {
 			throw new Exception("reconfigureFieldDescriptionByHeaderLine failed because not header line is set");
+		}
+	}
+	
+	private void sortFieldDescriptions() {
+		sortList(fields);
+		if (debug) {
+			System.out.println("\nReordered list of field descriptions:");
+			FieldDescription.debugOutFieldDescriptions(fields);
+		}
+		ft.setFieldDescriptions(fields);
+		for (int i = 0, n = fields.size(); i < n; i++) {
+			FieldDescription fd = fields.get(i);
+			fdIndexMap.put(fd.getIndex(), i);
 		}
 	}
 	
@@ -446,4 +449,75 @@ public final class Importer {
 		this.findHeaderPosByRegex = findHeaderPosByRegex;
 	}
 	
+	public void loadFieldDescriptionConfiguration(String configFilePath) throws Exception {
+		if (configFilePath == null || configFilePath.trim().isEmpty()) {
+			throw new IllegalArgumentException("configFilePath cannot be null or empty");
+		}
+		File configFile = new File(configFilePath);
+		if (configFile.canRead() == false) {
+			throw new Exception("Configuration file cann not be read or does not exists: " + configFilePath);
+		}
+		initConfig(loadProperties(configFile));
+	}
+
+    private Properties loadProperties(File propertiesFile) throws Exception {
+		if (propertiesFile.getName().endsWith(".importconfig") == false) {
+			throw new Exception("Unknown configuration file format! It must be of *.importconfig!");
+		}
+        FileInputStream fin = null;
+        final Properties importProperties = new Properties();
+        try {
+            fin = new FileInputStream(propertiesFile);
+            importProperties.load(fin);
+        } finally {
+            if (fin != null) {
+                try {
+                    fin.close();
+                } catch (Exception e) {}
+            }
+        }
+        return importProperties;
+    }
+
+    private void initConfig(Properties importProperties) throws Exception {
+        if (importProperties == null || importProperties.isEmpty()) {
+            throw new IllegalArgumentException("ImportProperties cannot be null or empty");
+        }
+    	attr.setupFrom(importProperties);
+        ArrayList<Integer> listIndexes = collectFieldDescriptionIndexes(importProperties);
+        fields.clear();
+        int index = 0;
+        for (Integer propertySearchIndex : listIndexes) {
+            fields.add(new FieldDescription(index++, propertySearchIndex.intValue(), importProperties));
+        }
+        initialize();
+    }
+    
+    public void saveConfigToFile(String configFilePath) throws Exception {
+    	if (configFilePath.trim().toLowerCase().endsWith(".importconfig") == false) {
+    		configFilePath = configFilePath.trim() + ".importconfig";
+    	}
+    	Properties props = new Properties();
+    	attr.storeInto(props);
+    	for (FieldDescription fd : fields) {
+    		fd.fillInProperties(props);
+    	}
+    	File configFile = new File(configFilePath);
+    	if (configFile.getParentFile().exists() == false) {
+    		configFile.getParentFile().mkdirs();
+    	}
+    	TreeMap<Object, Object> map = new TreeMap<Object, Object>(props);
+    	StringBuffer sb = new StringBuffer();
+    	for (Map.Entry<Object, Object> entry : map.entrySet()) {
+    		sb.append(entry.getKey());
+    		sb.append("=");
+    		sb.append(entry.getValue() != null ? entry.getValue() : "");
+    		sb.append("\n");
+    	}
+        final FileWriter fw = new FileWriter(configFile);
+        fw.append(sb.toString());
+        fw.flush();
+        fw.close();
+    }
+
 }

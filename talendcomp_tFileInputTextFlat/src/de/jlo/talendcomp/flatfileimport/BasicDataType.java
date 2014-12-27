@@ -59,6 +59,32 @@ public final class BasicDataType {
         return getName();
     }
 
+    public static int getIdFromClass(String className) {
+    	if ("String".equals(className)) {
+    		return CHARACTER.id;
+    	} else if ("Boolean".equals(className)) {
+    		return BOOLEAN.id;
+    	} else if ("Date".equals(className)) {
+    		return DATE.id;
+    	} else if ("Timestamp".equals(className)) {
+    		return DATE.id;
+    	} else if ("Short".equals(className)) {
+    		return NUMBER.id;
+    	} else if ("Integer".equals(className)) {
+    		return NUMBER.id;
+    	} else if ("Long".equals(className)) {
+    		return NUMBER.id;
+    	} else if ("BigDecimal".equals(className)) {
+    		return NUMBER.id;
+    	} else if ("Double".equals(className)) {
+    		return NUMBER.id;
+    	} else if ("Float".equals(className)) {
+    		return NUMBER.id;
+    	} else {
+    		return CHARACTER.id;
+    	}
+    }
+    
     public static String getDataClassName(int id) {
     	if (id == BOOLEAN.id) {
     		return "Boolean";
@@ -74,5 +100,21 @@ public final class BasicDataType {
     		throw new RuntimeException("unsupported id=" + id);
     	}
     }
-    
+
+    public static boolean isNumberType(int type) {
+    	return type == NUMBER.id;
+    }
+
+    public static boolean isStringType(int type) {
+    	return type == CLOB.id || type == CHARACTER.id;
+    }
+
+    public static boolean isDateType(int type) {
+    	return type == DATE.id;
+    }
+
+    public static boolean isBooleanType(int type) {
+    	return type == BOOLEAN.id;
+    }
+
 }

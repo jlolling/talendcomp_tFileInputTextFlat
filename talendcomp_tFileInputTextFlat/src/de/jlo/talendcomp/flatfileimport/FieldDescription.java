@@ -462,12 +462,14 @@ public final class FieldDescription {
     
     public void fillInProperties(Properties props) {
         if (name != null) {
-            props.put("COLUMN_" + String.valueOf(index) + "_NAME", name); 
+            props.put("COLUMN_" + String.valueOf(index) + "_NAME", name);
+            props.put("COLUMN_" + String.valueOf(index) + "_CLASS", dataClassName);
+            if (basicType == -1) {
+            	basicType = BasicDataType.getIdFromClass(dataClassName);
+            }
             props.put("COLUMN_" + String.valueOf(index) + "_BASICTYPE", String.valueOf(basicType));
-            if (basicType == BasicDataType.DATE.getId() && format != null) {
+            if (format != null) {
                 props.put("COLUMN_" + String.valueOf(index) + "_FORMAT", format);
-            } else {
-                props.remove("COLUMN_" + String.valueOf(index) + "_FORMAT");
             }
             if (locale != null) {
                 props.put("COLUMN_" + String.valueOf(index) + "_LOCALE", locale.toString());
@@ -476,8 +478,12 @@ public final class FieldDescription {
             }
             props.put("COLUMN_" + String.valueOf(index) + "_POSITIONTYPE", String.valueOf(positionType));
             props.put("COLUMN_" + String.valueOf(index) + "_DELIMITERCOUNT", String.valueOf(delimPos));
-            props.put("COLUMN_" + String.valueOf(index) + "_ABSPOS", String.valueOf(absPos));
-            props.put("COLUMN_" + String.valueOf(index) + "_LENGTH", String.valueOf(length));
+            if (absPos != -1) {
+                props.put("COLUMN_" + String.valueOf(index) + "_ABSPOS", String.valueOf(absPos));
+            }
+            if (length > 0) {
+                props.put("COLUMN_" + String.valueOf(index) + "_LENGTH", String.valueOf(length));
+            }
             props.put("COLUMN_" + String.valueOf(index) + "_ENABLED", String.valueOf(enabled));
             if (defaultValue != null) {
                 props.put("COLUMN_" + String.valueOf(index) + "_DEFAULT", defaultValue);
@@ -492,6 +498,7 @@ public final class FieldDescription {
             props.put("COLUMN_" + String.valueOf(index) + "_NULL_ENABLED", String.valueOf(nullEnabled));
             props.put("COLUMN_" + String.valueOf(index) + "_IGNORE_DATASET_IF_INVALID", String.valueOf(ignoreDatasetIfInvalid));
             props.put("COLUMN_" + String.valueOf(index) + "_TRIM", String.valueOf(trimRequired));
+            props.put("COLUMN_" + String.valueOf(index) + "_IGNORE_MISSING_COLUMN", String.valueOf(ignoreIfMissing));
             if (filterRegex != null) {
                 props.put("COLUMN_" + String.valueOf(index) + "_REGEX", filterRegex);
             } else {
@@ -502,7 +509,11 @@ public final class FieldDescription {
 
     public void setupFromProperties(int descriptionIndex, Properties props) {
         name = props.getProperty("COLUMN_" + String.valueOf(descriptionIndex) + "_NAME"); 
-        basicType = Integer.parseInt(props.getProperty("COLUMN_" + String.valueOf(descriptionIndex) + "_BASICTYPE", "0"));
+        basicType = Integer.parseInt(props.getProperty("COLUMN_" + String.valueOf(descriptionIndex) + "_BASICTYPE", "-1"));
+        dataClassName = props.getProperty("COLUMN_" + String.valueOf(descriptionIndex) + "_CLASS");
+        if (dataClassName == null && basicType != -1) {
+        	dataClassName = BasicDataType.getDataClassName(basicType);
+        }
         setLocale(props.getProperty("COLUMN_" + String.valueOf(descriptionIndex) + "_LOCALE"));
         format = props.getProperty("COLUMN_" + String.valueOf(descriptionIndex) + "_FORMAT");
         positionType = Integer.parseInt(props.getProperty("COLUMN_" + String.valueOf(descriptionIndex) + "_POSITIONTYPE", "0"));
@@ -515,6 +526,7 @@ public final class FieldDescription {
         nullEnabled = props.getProperty("COLUMN_" + String.valueOf(descriptionIndex) + "_NULL_ENABLED", "false").equals("true");
         ignoreDatasetIfInvalid = props.getProperty("COLUMN_" + String.valueOf(descriptionIndex) + "_IGNORE_DATASET_IF_INVALID", "false").equals("true");
         trimRequired = props.getProperty("COLUMN_" + String.valueOf(descriptionIndex) + "_TRIM", "false").equals("true");
+        ignoreIfMissing = props.getProperty("COLUMN_" + String.valueOf(descriptionIndex) + "_IGNORE_MISSING_COLUMN", "false").equals("true");
         setFilterRegex(props.getProperty("COLUMN_" + String.valueOf(descriptionIndex) + "_REGEX"));
     }
 
