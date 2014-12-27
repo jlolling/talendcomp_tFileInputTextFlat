@@ -5,10 +5,7 @@
 		org.talend.core.model.metadata.IMetadataTable 
 		org.talend.core.model.metadata.IMetadataColumn 
 		org.talend.core.model.process.IConnection
-		org.talend.core.model.process.IConnectionCategory
 		org.talend.designer.codegen.config.CodeGeneratorArgument
-		org.talend.core.model.metadata.types.JavaTypesManager
-		org.talend.core.model.metadata.types.JavaType
 		java.util.List
 		java.util.ArrayList
     	java.util.Map
@@ -22,6 +19,7 @@
     String cid = node.getUniqueName();
     String file = ElementParameterParser.getValue(node, "__FILENAME__");
     String encoding = ElementParameterParser.getValue(node, "__ENCODING__");
+    boolean skipBOM = "true".equals(ElementParameterParser.getValue(node, "__IGNORE_BOM__"));
     String delimiter = ElementParameterParser.getValue(node, "__FIELDSEPARATOR__");
     String rowsToSkip = ElementParameterParser.getValue(node, "__LINES_TO_SKIP__");
     String enclosure = ElementParameterParser.getValue(node, "__TEXT_ENCLOSURE__");
@@ -112,12 +110,15 @@
 	}
 	boolean dieOnError = "true".equals(ElementParameterParser.getValue(node, "__DIE_ON_ERROR__"));
 	String debug = ElementParameterParser.getValue(node, "__DEBUG__");
+	boolean loadConfigFromFile = "true".equals(ElementParameterParser.getValue(node, "__LOAD_CONFIG_FROM_FILE__"));
+	String configFile = ElementParameterParser.getValue(node, "__CONFIG_FILE__");
 %>
     // <%=mainConnName%> , <%=rejectConnName%>
 	de.jlo.talendcomp.flatfileimport.Importer <%=cid%> = new de.jlo.talendcomp.flatfileimport.Importer();
 	<%=cid%>.setDebug(<%=debug%>);
 	<%=cid%>.setImportFile(<%=file%>);
 	<%=cid%>.setFileCharset(<%=encoding%>);
+	<%=cid%>.skipBOM(<%=skipBOM%>);
 	<%=cid%>.setSkipEmptyLines(<%=skipEmptyLines%>);
 	<%=cid%>.setHasHeaderRow(<%=hasColumnHeaderLine%>);
 	<%=cid%>.setIgnoreNotNullConstraints(<%=ignoreNotNull%>);
@@ -136,46 +137,54 @@
 	final class ImportHelper_<%=cid%> {
 	
 		public void configureFields(de.jlo.talendcomp.flatfileimport.Importer importer) {
-<%  for (columnIndex = 0; columnIndex < listColumns.size(); columnIndex++) {
+<%  if (loadConfigFromFile == false) {
+      for (columnIndex = 0; columnIndex < listColumns.size(); columnIndex++) {
 		IMetadataColumn column = listColumns.get(columnIndex);
 		String columnName = column.getLabel();
 		String header = headerNameMap.get(columnName);
 		column.setComment(header);
 		String type = column.getTalendType().substring(3);
-		String pattern = column.getPattern();
+		String pattern = null;
 		String pos = positionMap.get(columnName);
 		String posType = posTypeMap.get(columnName);
 		String length = lengthMap.get(columnName);
-		if (pattern == null || pattern.isEmpty()) {
-			if ("Date".equals(type) || "Timestamp".equals(type)) {
+		if ("Date".equals(type) || "Timestamp".equals(type)) {
+			pattern = column.getPattern();
+			if (pattern == null || pattern.trim().isEmpty()) {
 				pattern = defaultDateFormat;
-			} else {
-				pattern = numberLocale;
 			}
+		} else if (("String".equals(type) || "Boolean".equals(type)) == false) {
+			pattern = numberLocale;
 		}
 		String regex = regexMap.get(columnName);
 		String trim = trimMap.get(columnName);
 		String ignoreIfMissing = ignoreMissingMap.get(columnName);
+		String defaultValue = column.getDefault();
+		if (defaultValue == null || defaultValue.trim().isEmpty()) {
+			defaultValue = "null";
+		}
 		if ("DEL".equals(posType)) { %>
 			importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription.createDelimited(
-				"<%=header != null ? header : columnName%>", // columnName 
+				"<%=header != null ? header : columnName%>", // columnName
 				"<%=type%>", // type
 				<%=column.isNullable()%>, // nullable 
 				<%=pos%>, // pos
 				<%=length%>, // length
-				<%=pattern%>, // pattern
-				<%=regex%>, // regex
+				<%=(pattern != null ? pattern : "null") %>, // pattern
+				<%=(regex != null ? regex : "null") %>, // regex
 				<%=trim%>, // trim
-				<%=ignoreIfMissing%>)); // ignoreMissing
+				<%=ignoreIfMissing%>, // ignoreMissing
+				<%=defaultValue%>)); // defaultValue
 <%      } else if ("ABS".equals(posType) && "-1".equals(pos)) { %>
 			importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription.createRelativePos(
 				"<%=header != null ? header : columnName%>", // columnName
 				"<%=type%>", // type
 				<%=column.isNullable()%>, // nullable 
 				<%=length%>, // length
-				<%=pattern%>, // pattern
-				<%=regex%>, // regex
-				<%=trim%>)); // trim
+				<%=(pattern != null ? pattern : "null") %>, // pattern
+				<%=(regex != null ? regex : "null") %>, // regex
+				<%=trim%>, // trim
+				<%=defaultValue%>)); // defaultValue
 <%      } else if ("ABS".equals(posType) && "-1".equals(pos) == false) { %>
 			importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription.createAbsolutePos(
 				"<%=header != null ? header : columnName%>", // columnName 
@@ -183,13 +192,15 @@
 				<%=column.isNullable()%>, // nullable 
 				<%=pos%>, // pos
 				<%=length%>, // length
-				<%=pattern%>, // pattern
-				<%=regex%>, // regex
-				<%=trim%>)); // trim
+				<%=(pattern != null ? pattern : "null") %>, // pattern
+				<%=(regex != null ? regex : "null") %>, // regex
+				<%=trim%>, // trim
+				<%=defaultValue%>)); // defaultValue
 <%      } else { %>
 			// unknown position type: <%=posType%>, sorry this should never happen!
 <%      }
-    } %>
+      } // for
+   } // if (loadFromConfigFile %>    
 		} // end of configureFields
 		
 		public void fillOutputFlow(de.jlo.talendcomp.flatfileimport.Importer importer, <%=mainConnName%>Struct flow) throws Exception {
@@ -227,8 +238,17 @@
 	
 	}
 	final ImportHelper_<%=cid%> helper_<%=cid%> = new ImportHelper_<%=cid%>();
-	helper_<%=cid%>.configureFields(<%=cid%>);
-	globalMap.put("<%=cid%>_HEADER_CONFIG_ERROR", false);
+<%  if (loadConfigFromFile) { %>
+	<%=cid%>.loadFieldDescriptionConfiguration(<%=configFile%>);
+<%  } else { %>
+	try {
+		helper_<%=cid%>.configureFields(<%=cid%>);
+		globalMap.put("<%=cid%>_HEADER_CONFIG_ERROR", false);
+	} catch (Exception e) {
+		globalMap.put("<%=cid%>_ERROR_MESSAGE", e.getMessage());
+		throw e;
+	}
+<%  } %>
     try {
     	<%=cid%>.initialize();
 <%  if (rowsToSkip != null && rowsToSkip.isEmpty() == false) { %>

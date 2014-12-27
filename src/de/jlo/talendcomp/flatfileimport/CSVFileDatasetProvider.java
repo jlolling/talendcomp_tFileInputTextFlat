@@ -18,7 +18,7 @@ public final class CSVFileDatasetProvider implements DatasetProvider {
 	private long currentRowNum = 0;
 	private String currentLine = null;
 	private boolean skipEmptyLines = true;
-	public static char BOM = 0xFEFF;
+	public static char[] BOMS = {0xFEFF, 0xEF, 0xBB, 0xBF};
 	private boolean ignoreBOM = false;
 		
 	/**
@@ -82,7 +82,15 @@ public final class CSVFileDatasetProvider implements DatasetProvider {
 		currentLine = readLine();
 		// BOM detection only in the first line
 		if (ignoreBOM && currentRowNum == 0 && currentLine != null && currentLine.length() > 0) {
-			if (currentLine.charAt(0) == BOM) {
+			boolean hasBOM = false;
+			char firstLineChar = currentLine.charAt(0);
+			for (char bom : BOMS) {
+				if (firstLineChar == bom) {
+					hasBOM = true;
+					break;
+				}
+			}
+			if (hasBOM) {
 				currentLine = currentLine.substring(1); // skip BOM
 			}
 		}

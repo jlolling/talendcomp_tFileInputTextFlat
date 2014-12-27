@@ -12,7 +12,6 @@ public class ImportAttributes {
 	private boolean ignoreLineBreakInEnclosedValues = false;
 	private boolean ignoreNotNullConstraint = false;
 	private boolean allowEnclosureInText = false;
-	private int columnCount;
 	private String charsetName;
 	private boolean ignoreBOM = false;
 	public static final String DEFAULT_CHARSET = System.getProperty("file.encoding");
@@ -27,7 +26,6 @@ public class ImportAttributes {
         } else {
         	properties.remove("ENCLOSURE");
         }
-        properties.put("COLUMN_COUNT", String.valueOf(columnCount));
         properties.put("IGNORE_NOT_NULL_CONSTRAINTS", ignoreNotNullConstraint);
         properties.put("ALLOW_ENCLUSURE_IN_TEXT", allowEnclosureInText);
         properties.put("IGNORE_BOM", ignoreBOM);
@@ -67,26 +65,37 @@ public class ImportAttributes {
 		return getTokenFromDelimiter(delimiter);
 	}
 	
-	public void clear() {
-		Properties p = new Properties();
-		try {
-			setupFrom(p);
-		} catch(Exception e) {
-			System.err.println(e);
-		}
-	}
-
 	public void setupFrom(Properties properties) throws Exception {
-        delimiter = getDelimiterFromToken(properties.getProperty("DELIMITER"));
-        enclosure = properties.getProperty("ENCLOSURE");
-        ignoreLineBreakInEnclosedValues = "true".equals(properties.getProperty("IGNORE_ENCLOSED_LINE_BREAK", "false"));
-        hasHeaderLine = properties.getProperty("SKIP_FIRST_ROW", "true").trim().equals("true");
-        countSkipRows = Integer.parseInt(properties.getProperty("SKIP_ROWS", "0"));
-        skipEmptyLines = "true".equals(properties.put("SKIP_EMPTY_LINES", "false"));
-        ignoreNotNullConstraint = "true".equals(properties.getProperty("IGNORE_NOT_NULL_CONSTRAINTS", "false"));
-        allowEnclosureInText = "true".equals(properties.getProperty("ALLOW_ENCLUSURE_IN_TEXT", "false"));
-        ignoreBOM = "true".equals(properties.getProperty("IGNORE_BOM", "false"));
-		setCharsetName(properties.getProperty("CHARSET", DEFAULT_CHARSET));
+		if (properties.containsKey("DELIMITER")) {
+	        delimiter = getDelimiterFromToken(properties.getProperty("DELIMITER"));
+		}
+		if (properties.containsKey("ENCLOSURE")) {
+	        enclosure = properties.getProperty("ENCLOSURE");
+		}
+		if (properties.containsKey("IGNORE_ENCLOSED_LINE_BREAK")) {
+			ignoreLineBreakInEnclosedValues = "true".equals(properties.getProperty("IGNORE_ENCLOSED_LINE_BREAK", "false"));
+		}
+		if (properties.containsKey("SKIP_FIRST_ROW")) {
+	        hasHeaderLine = properties.getProperty("SKIP_FIRST_ROW", "true").trim().equals("true");
+		}
+		if (properties.containsKey("SKIP_ROWS")) {
+	        countSkipRows = Integer.parseInt(properties.getProperty("SKIP_ROWS", "0"));
+		}
+		if (properties.containsKey("SKIP_EMPTY_LINES")) {
+	        skipEmptyLines = "true".equals(properties.put("SKIP_EMPTY_LINES", "false"));
+		}
+		if (properties.containsKey("IGNORE_NOT_NULL_CONSTRAINTS")) {
+	        ignoreNotNullConstraint = "true".equals(properties.getProperty("IGNORE_NOT_NULL_CONSTRAINTS", "false"));
+		}
+		if (properties.containsKey("ALLOW_ENCLUSURE_IN_TEXT")) {
+	        allowEnclosureInText = "true".equals(properties.getProperty("ALLOW_ENCLUSURE_IN_TEXT", "false"));
+		}
+		if (properties.containsKey("IGNORE_BOM")) {
+	        ignoreBOM = "true".equals(properties.getProperty("IGNORE_BOM", "false"));
+		}
+		if (properties.containsKey("CHARSET")) {
+			setCharsetName(properties.getProperty("CHARSET", DEFAULT_CHARSET));
+		}
 	}
 	
 	public String getCharsetName() {
@@ -132,14 +141,6 @@ public class ImportAttributes {
 		this.enclosure = enclosure;
 	}
 	
-    public int getColumnCount() {
-		return columnCount;
-	}
-	
-    public void setColumnCount(int columnCount) {
-		this.columnCount = columnCount;
-	}
-
 	public boolean isIgnoreLineBreakInEnclosedValues() {
 		return ignoreLineBreakInEnclosedValues;
 	}
