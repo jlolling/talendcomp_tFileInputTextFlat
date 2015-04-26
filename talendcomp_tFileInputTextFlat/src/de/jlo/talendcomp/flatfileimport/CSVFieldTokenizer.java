@@ -288,16 +288,11 @@ public final class CSVFieldTokenizer extends AbstractFieldTokenizer {
 	        if (value != null && field.isTrimRequired()) {
 	            value = value.trim();
 	        }
-			if (value == null || value.length() == 0) {
-	            if (field.getAlternativeFieldDescription() != null) {
-	                // check if there is an alternative field
-	                value = extractData(field.getAlternativeFieldDescription());
-	            }
-	            if (value == null || value.length() == 0) {
-	       			value = field.getDefaultValue();
-	            }
-			} else {
+			if (value != null && value.isEmpty() == false) {
 				value = filter(field.getFilterPattern(), value);
+			}
+			if (value == null || value.isEmpty()) {
+				value = field.getDefaultValue();
 			}
 	        if (field.getBasicTypeId() == BasicDataType.NUMBER.getId()) {
 	            if (value != null && value.endsWith("-")) {

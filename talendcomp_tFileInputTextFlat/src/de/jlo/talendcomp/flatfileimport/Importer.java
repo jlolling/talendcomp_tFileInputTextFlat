@@ -26,7 +26,7 @@ public final class Importer {
 	private final List<FieldDescription> fields = new ArrayList<FieldDescription>();
 	private String currentDataset = null;
 	private boolean headerLineSkipped = false;
-	private Map<Integer, Integer> fdIndexMap = new HashMap<Integer, Integer>();
+	private Map<Integer, Integer> schemaToStorageIndexMap = new HashMap<Integer, Integer>();
 	private boolean debug = false;
 	private boolean findHeaderPosByRegex = false;
 	
@@ -80,18 +80,29 @@ public final class Importer {
 
     public void initialize() throws Exception {
     	if (fields.isEmpty()) {
-    		throw new Exception("Field description list is empty!");
+    		throw new Exception("Column list is empty!");
     	}
         for (int d = 0; d < fields.size(); d++) {
             FieldDescription fd = fields.get(d);
             if (fd.getAlternativeFieldDescriptionName() != null) {
-                fd.setAlternativeFieldDescription(getFieldDescription(fd.getAlternativeFieldDescriptionName()));
+            	FieldDescription altFd = getFieldDescription(fd.getAlternativeFieldDescriptionName());
+            	if (altFd != null) {
+            		if (altFd.isEnabled()) {
+                        fd.setAlternativeFieldDescription(altFd);
+            		} else {
+            			System.err.println();
+            		}
+            	} else {
+                    throw new Exception("Check column: " + fd.toString() + ": the alternativ column: " + fd.getAlternativeFieldDescriptionName() + " does not exits.");
+            	}
             }
-            if (fd.validate() == false) {
-                throw new Exception("Check FieldDescription:" + fd.toString() + ":" + fd.getErrorMessage());
-            } else {
-                if (BasicDataType.isNumberType(fd.getBasicTypeId()) && fd.getFieldFormat() == null) {
-                    System.err.println("field " + fd + " has numeric type without defined number locale. This can result in wrong parsing if value is a fraction number");
+            if (fd.isEnabled()) {            	
+                if (fd.validate() == false) {
+                    throw new Exception("Check column: " + fd.toString() + ":" + fd.getErrorMessage());
+                } else {
+                    if (BasicDataType.isNumberType(fd.getBasicTypeId()) && fd.getFieldFormat() == null) {
+                        System.err.println("Column " + fd + " has numeric type without defined number locale. This can result in wrong parsing if value is a fraction number");
+                    }
                 }
             }
         }
@@ -106,7 +117,7 @@ public final class Importer {
 		ft = dsp.createParser(attr);
 		ft.setDebug(debug);
 		if (debug) {
-			System.out.println("\nInitial set list of field descriptions:");
+			System.out.println("\nInitial set list of columns:");
 			FieldDescription.debugOutFieldDescriptions(fields);
 		}
     	sortFieldDescriptions();
@@ -155,7 +166,7 @@ public final class Importer {
 	
 	public void addFieldDescription(FieldDescription fd) {
 		fields.add(fd);
-		fd.setIndex(fields.indexOf(fd));
+		fd.setSchemaColumnIndex(fields.indexOf(fd));
 	}
 	
 	public void skipTopRows() {
@@ -251,7 +262,7 @@ public final class Importer {
 					int pos = findPosition(headers, fd.getName());
 					if (pos == -1) {
 						if (fd.isIgnoreIfMissing() == false) {
-							throw new Exception("Field " + fd.getName() + " not found in header line!");
+							throw new Exception("Column " + fd.getName() + " not found in header line!");
 						} else {
 							fd.setEnabled(false); // disable field to avoid fetching values
 						}
@@ -260,28 +271,28 @@ public final class Importer {
 				}
 				sortFieldDescriptions();
 			} else {
-				System.err.println("Could not configure fields by header line because there is not header line");
+				System.err.println("Could not configure columns by header line because there is not header line");
 			}
 		} else {
-			throw new Exception("reconfigureFieldDescriptionByHeaderLine failed because not header line is set");
+			throw new Exception("Reconfiguring column list failed because none header line is set");
 		}
 	}
 	
 	private void sortFieldDescriptions() {
 		sortList(fields);
 		if (debug) {
-			System.out.println("\nReordered list of field descriptions:");
+			System.out.println("\nReordered list of columns:");
 			FieldDescription.debugOutFieldDescriptions(fields);
 		}
 		ft.setFieldDescriptions(fields);
 		for (int i = 0, n = fields.size(); i < n; i++) {
 			FieldDescription fd = fields.get(i);
-			fdIndexMap.put(fd.getIndex(), i);
+			schemaToStorageIndexMap.put(fd.getSchemaColumnIndex(), i);
 		}
 	}
 	
 	private int getFieldIndex(int index) {
-		Integer i = fdIndexMap.get(index);
+		Integer i = schemaToStorageIndexMap.get(index);
 		if (i == null) {
 			return index;
 		} else {
@@ -313,8 +324,23 @@ public final class Importer {
 		return currentDataset;
 	}
 	
+	public Object getData(int schemaColumnIndex) {
+    	return getData(fields.get(getFieldIndex(schemaColumnIndex)));
+	}
+    
+	private Object getData(FieldDescription fd) {
+		if (fd == null) {
+			return FieldTokenizer.NULL;
+		}
+		Object value = ft.getData(getFieldIndex(fd.getSchemaColumnIndex()));
+		if (value == FieldTokenizer.NULL) {
+			return getData(fd.getAlternativeFieldDescription());
+		}
+    	return value;
+	}
+	
 	public Object getObjectAt(int index, boolean nullable) {
-		Object value = ft.getData(getFieldIndex(index));
+		Object value = getData(index);
 		if (value == FieldTokenizer.NULL) {
 			return nullable ? null : new Object();
 		} else {
@@ -323,7 +349,7 @@ public final class Importer {
 	}
 	
 	public String getStringAt(int index, boolean nullable) {
-		Object value = ft.getData(getFieldIndex(index));
+		Object value = getData(index);
 		if (value == FieldTokenizer.NULL) {
 			return nullable ? null : "";
 		} else {
@@ -332,7 +358,7 @@ public final class Importer {
 	}
 
 	public Character getCharAt(int index, boolean nullable) {
-		Object value = ft.getData(getFieldIndex(index));
+		Object value = getData(index);
 		if (value == FieldTokenizer.NULL) {
 			return nullable ? null : ' ';
 		} else {
@@ -341,7 +367,7 @@ public final class Importer {
 	}
 
 	public Integer getIntegerAt(int index, boolean nullable) {
-		Object value = ft.getData(getFieldIndex(index));
+		Object value = getData(index);
 		if (value == FieldTokenizer.NULL) {
 			return nullable ? null : 0;
 		} else {
@@ -350,7 +376,7 @@ public final class Importer {
 	}
 
 	public Short getShortAt(int index, boolean nullable) {
-		Object value = ft.getData(getFieldIndex(index));
+		Object value = getData(index);
 		if (value == FieldTokenizer.NULL) {
 			return nullable ? null : (short) 0;
 		} else {
@@ -359,7 +385,7 @@ public final class Importer {
 	}
 
 	public Long getLongAt(int index, boolean nullable) {
-		Object value = ft.getData(getFieldIndex(index));
+		Object value = getData(index);
 		if (value == FieldTokenizer.NULL) {
 			return nullable ? null : 0l;
 		} else {
@@ -368,7 +394,7 @@ public final class Importer {
 	}
 
 	public Double getDoubleAt(int index, boolean nullable) {
-		Object value = ft.getData(getFieldIndex(index));
+		Object value = getData(index);
 		if (value == FieldTokenizer.NULL) {
 			return nullable ? null : 0d;
 		} else {
@@ -377,7 +403,7 @@ public final class Importer {
 	}
 
 	public Float getFloatAt(int index, boolean nullable) {
-		Object value = ft.getData(getFieldIndex(index));
+		Object value = getData(index);
 		if (value == FieldTokenizer.NULL) {
 			return nullable ? null : 0f;
 		} else {
@@ -386,7 +412,7 @@ public final class Importer {
 	}
 
 	public Boolean getBooleanAt(int index, boolean nullable) {
-		Object value = ft.getData(getFieldIndex(index));
+		Object value = getData(index);
 		if (value == FieldTokenizer.NULL) {
 			return nullable ? null : false;
 		} else {
@@ -395,7 +421,7 @@ public final class Importer {
 	}
 
 	public BigDecimal getBigDecimalAt(int index, boolean nullable) {
-		Object value = ft.getData(getFieldIndex(index));
+		Object value = getData(index);
 		if (value == FieldTokenizer.NULL) {
 			return nullable ? null : BigDecimal.ZERO;
 		} else {
@@ -404,7 +430,7 @@ public final class Importer {
 	}
 
 	public Date getDateAt(int index, boolean nullable) {
-		Object value = ft.getData(getFieldIndex(index));
+		Object value = getData(index);
 		if (value == FieldTokenizer.NULL) {
 			return nullable ? null : new Date(0l);
 		} else {
@@ -413,7 +439,7 @@ public final class Importer {
 	}
 	
 	public Timestamp getTimestampAt(int index, boolean nullable) {
-		Object value = ft.getData(getFieldIndex(index));
+		Object value = getData(index);
 		if (value == FieldTokenizer.NULL) {
 			return nullable ? null : new Timestamp(0l);
 		} else {
@@ -493,14 +519,36 @@ public final class Importer {
         initialize();
     }
     
-    public void saveConfigToFile(String configFilePath) throws Exception {
+    public void saveConfigToFile(String configFilePath, boolean renableFieldsNotFound) throws Exception {
     	if (configFilePath.trim().toLowerCase().endsWith(".importconfig") == false) {
     		configFilePath = configFilePath.trim() + ".importconfig";
     	}
     	Properties props = new Properties();
     	attr.storeInto(props);
+    	int lastPos = 0;
+    	if (renableFieldsNotFound) {
+        	for (FieldDescription fd : fields) {
+        		if (lastPos <= fd.getDelimPos()) {
+        			lastPos = fd.getDelimPos() + 1;
+        		}
+        		if (lastPos <= fd.getAbsPos()) {
+        			lastPos = fd.getAbsPos() + 1;
+        		}
+        	}
+    	}
     	for (FieldDescription fd : fields) {
-    		fd.fillInProperties(props);
+    		if (renableFieldsNotFound) {
+        		FieldDescription temp = fd.clone();
+    			if (temp.isEnabled() == false) {
+    				temp.setEnabled(true);
+    			}
+    			if (temp.getPositionType() == FieldDescription.DELIMITER_POSITION && temp.getDelimPos() == -1) {
+    				temp.setDelimPos(lastPos++);
+    			}
+        		temp.fillInProperties(props);
+    		} else if (fd.isEnabled()) {
+        		fd.fillInProperties(props);
+    		}
     	}
     	File configFile = new File(configFilePath);
     	if (configFile.getParentFile().exists() == false) {

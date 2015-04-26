@@ -22,10 +22,12 @@
     boolean skipBOM = "true".equals(ElementParameterParser.getValue(node, "__IGNORE_BOM__"));
     String delimiter = ElementParameterParser.getValue(node, "__FIELDSEPARATOR__");
     String rowsToSkip = ElementParameterParser.getValue(node, "__LINES_TO_SKIP__");
+	boolean useEnclosures = "true".equals(ElementParameterParser.getValue(node, "__USE_ENCLOSURES__"));
     String enclosure = ElementParameterParser.getValue(node, "__TEXT_ENCLOSURE__");
     if ("\"\"\"".equals(enclosure)) {
     	enclosure = "\"\\\"\"";
     }
+	String allowEnclosureInText = ElementParameterParser.getValue(node, "__ALLOW_ENCLUSURE_IN_TEXT__");
     String splitRowFirst = ElementParameterParser.getValue(node, "__PARSE_ROW_FIRST__");
     String numberLocale = ElementParameterParser.getValue(node, "__NUMBER_COUNTRY__");
     String defaultDateFormat = ElementParameterParser.getValue(node, "__DEFAULT_DATE_FORMAT__");
@@ -35,7 +37,7 @@
     boolean hasColumnHeaderLine = "true".equals(ElementParameterParser.getValue(node, "__COLUMN_HEADER_LINE__"));
     boolean configByHeader = "true".equals(ElementParameterParser.getValue(node, "__CONFIG_DELIMITED_BY_HEADER__"));
     String useRegexToFindColumnInHeader = ElementParameterParser.getValue(node, "__CONFIG_HEADER_BY_REGEX__");
-	String allowEnclosureInText = ElementParameterParser.getValue(node, "__ALLOW_ENCLUSURE_IN_TEXT__");
+	@SuppressWarnings("unchecked")
 	List<Map<String, String>> importDescList = (List<Map<String,String>>) ElementParameterParser.getObjectValue(node, "__FIELD_CONFIG__");
 	Map<String, String> headerNameMap = new HashMap<String, String>();
 	Map<String, String> posTypeMap = new HashMap<String, String>();
@@ -43,6 +45,8 @@
 	Map<String, String> lengthMap = new HashMap<String, String>();
 	Map<String, String> regexMap = new HashMap<String, String>();
 	Map<String, String> ignoreMissingMap = new HashMap<String, String>();
+	Map<String, String> alternativeMap = new HashMap<String, String>();
+    boolean allowAltNames = "true".equals(ElementParameterParser.getValue(node, "__ALLOW_ALT_COLUMNS__"));
 	int columnIndex = 0;
 	for (Map<String, String> fd : importDescList) {
 		String schemaColumn = fd.get("SCHEMA_COLUMN");
@@ -67,14 +71,16 @@
 		}
 		lengthMap.put(schemaColumn, length);
 		String regex = fd.get("REGEX");
-		if (regex == null || regex.isEmpty()) {
-			regex = "null";
-		}
 		regexMap.put(schemaColumn, regex);
 		String ignoreMissing = fd.get("IGNORE_IF_MISSING");
 		ignoreMissingMap.put(schemaColumn, ignoreMissing);
+		if (allowAltNames) {
+			String alternative = fd.get("ALTERNATIVE");
+			alternativeMap.put(schemaColumn, alternative);
+		}
 		columnIndex++;
 	}
+	@SuppressWarnings("unchecked")
 	List<Map<String, String>> trimList = (List<Map<String,String>>) ElementParameterParser.getObjectValue(node, "__TRIMSELECT__");
 	Map<String, String> trimMap = new HashMap<String, String>();
 	for (Map<String, String> entry : trimList) {
@@ -103,11 +109,6 @@
 	if (metadata != null) {
    		listColumns = metadata.getListColumns();
 	}
-	List<IMetadataColumn> listRejectColumns = new ArrayList<IMetadataColumn>();
-	metadata = node.getMetadataFromConnector("REJECT");
-	if (metadata != null) {
-   		listRejectColumns = metadata.getListColumns();
-	}
 	boolean dieOnError = "true".equals(ElementParameterParser.getValue(node, "__DIE_ON_ERROR__"));
 	String debug = ElementParameterParser.getValue(node, "__DEBUG__");
 	boolean loadConfigFromFile = "true".equals(ElementParameterParser.getValue(node, "__LOAD_CONFIG_FROM_FILE__"));
@@ -117,21 +118,23 @@
 	de.jlo.talendcomp.flatfileimport.Importer <%=cid%> = new de.jlo.talendcomp.flatfileimport.Importer();
 	<%=cid%>.setDebug(<%=debug%>);
 	<%=cid%>.setImportFile(<%=file%>);
-	<%=cid%>.setFileCharset(<%=encoding%>);
 	<%=cid%>.skipBOM(<%=skipBOM%>);
 	<%=cid%>.setSkipEmptyLines(<%=skipEmptyLines%>);
 	<%=cid%>.setHasHeaderRow(<%=hasColumnHeaderLine%>);
 	<%=cid%>.setIgnoreNotNullConstraints(<%=ignoreNotNull%>);
-<%  if (delimiter != null && delimiter.isEmpty() == false) { %>
-	<%=cid%>.setDelimiter(<%=delimiter%>);
-<%  }
-    if (rowsToSkip != null && rowsToSkip.isEmpty() == false) { %>
+<%  if (rowsToSkip != null && rowsToSkip.isEmpty() == false) { %>
     <%=cid%>.setRowsToSkip(<%=rowsToSkip%>);
 <%  }
-	if (enclosure != null && enclosure.isEmpty() == false) { %>
+	if (loadConfigFromFile == false ) { %>
+<%    if (delimiter != null && delimiter.isEmpty() == false) { %>
+	<%=cid%>.setDelimiter(<%=delimiter%>);
+<%    } %>
+	<%=cid%>.setFileCharset(<%=encoding%>);
+<%    if (useEnclosures && enclosure != null && enclosure.isEmpty() == false) { %>
 	<%=cid%>.setIgnoreLinebreakInEnclosures(!<%=splitRowFirst%>);
 	<%=cid%>.setEnclosure(<%=enclosure%>);
 	<%=cid%>.allowEnclosureInFieldContent(<%=allowEnclosureInText%>);
+<%    } %>
 <%  } %>
 	// helper to configure fields and get values
 	final class ImportHelper_<%=cid%> {
@@ -156,12 +159,22 @@
 		} else if (("String".equals(type) || "Boolean".equals(type)) == false) {
 			pattern = numberLocale;
 		}
+		if (pattern == null || pattern.trim().isEmpty()) {
+			pattern = "null";
+		}
 		String regex = regexMap.get(columnName);
+		if (regex == null || regex.trim().isEmpty()) {
+			regex = "null";
+		}
 		String trim = trimMap.get(columnName);
 		String ignoreIfMissing = ignoreMissingMap.get(columnName);
 		String defaultValue = column.getDefault();
 		if (defaultValue == null || defaultValue.trim().isEmpty()) {
 			defaultValue = "null";
+		}
+		String alternative = alternativeMap.get(columnName);
+		if (alternative == null || alternative.trim().isEmpty()) {
+			alternative = "null";
 		}
 		if ("DEL".equals(posType)) { %>
 			importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription.createDelimited(
@@ -170,21 +183,23 @@
 				<%=column.isNullable()%>, // nullable 
 				<%=pos%>, // pos
 				<%=length%>, // length
-				<%=(pattern != null ? pattern : "null") %>, // pattern
-				<%=(regex != null ? regex : "null") %>, // regex
+				<%=pattern%>, // pattern
+				<%=regex%>, // regex
 				<%=trim%>, // trim
 				<%=ignoreIfMissing%>, // ignoreMissing
-				<%=defaultValue%>)); // defaultValue
+				<%=defaultValue%>, // defaultValue
+				<%=alternative%>)); // alternative
 <%      } else if ("ABS".equals(posType) && "-1".equals(pos)) { %>
 			importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription.createRelativePos(
 				"<%=header != null ? header : columnName%>", // columnName
 				"<%=type%>", // type
 				<%=column.isNullable()%>, // nullable 
 				<%=length%>, // length
-				<%=(pattern != null ? pattern : "null") %>, // pattern
-				<%=(regex != null ? regex : "null") %>, // regex
+				<%=pattern%>, // pattern
+				<%=regex%>, // regex
 				<%=trim%>, // trim
-				<%=defaultValue%>)); // defaultValue
+				<%=defaultValue%>, // defaultValue
+				<%=alternative%>)); // alternative
 <%      } else if ("ABS".equals(posType) && "-1".equals(pos) == false) { %>
 			importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription.createAbsolutePos(
 				"<%=header != null ? header : columnName%>", // columnName 
@@ -192,10 +207,11 @@
 				<%=column.isNullable()%>, // nullable 
 				<%=pos%>, // pos
 				<%=length%>, // length
-				<%=(pattern != null ? pattern : "null") %>, // pattern
-				<%=(regex != null ? regex : "null") %>, // regex
+				<%=pattern%>, // pattern
+				<%=regex%>, // regex
 				<%=trim%>, // trim
-				<%=defaultValue%>)); // defaultValue
+				<%=defaultValue%>, // defaultValue
+				<%=alternative%>)); // alternative
 <%      } else { %>
 			// unknown position type: <%=posType%>, sorry this should never happen!
 <%      }
