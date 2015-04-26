@@ -32,15 +32,12 @@ public abstract class AbstractFieldTokenizer implements FieldTokenizer {
         fieldDataList.add(value);
     }
     
-	/* (non-Javadoc)
-	 * @see sqlrunner.flatfileimport.FieldTokenizer#getData(int)
-	 */
     @Override
 	public Object getData(int fieldDescriptionIndex) {
-		return fieldDataList.get(fieldDescriptionIndex);
+    	return fieldDataList.get(fieldDescriptionIndex);
 	}
     
-    @Override
+	@Override
     public List<Object> getData() {
     	return fieldDataList;
     }
@@ -70,7 +67,11 @@ public abstract class AbstractFieldTokenizer implements FieldTokenizer {
         return descriptions.get(index);
     }
 
-   	public void setFieldDescriptions(List<FieldDescription> listDescriptions) {
+    protected FieldDescription getAlternativeFieldDescriptionFor(int index) {
+        return descriptions.get(index).getAlternativeFieldDescription();
+    }
+
+    public void setFieldDescriptions(List<FieldDescription> listDescriptions) {
 		if (listDescriptions == null || listDescriptions.isEmpty()) {
 			throw new IllegalArgumentException("listDescriptions cannot be empty or null");
 		}

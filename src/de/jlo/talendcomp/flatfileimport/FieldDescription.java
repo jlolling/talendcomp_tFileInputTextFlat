@@ -9,15 +9,6 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-/**
- * beinhaltet alle Information zu einer Spalte einer Tabelle in der RS
- * # index: Index für die Reihenfolge des Einlesens
- * # delimPos: ab dem n.-mal des Auftretens des Trennzeichen, fehlt die Längenangabe, so wird das nächste Trennzeichen gesucht.
- * # delimString: Trennzeichenkette
- * # absPos: ab der absoluten position wird nicht ausgewertet, wenn delimiterPos angegeben
- * # length: Länge, ist nur die Länge angegeben werden ab der letzten position die Zeichen eingelesen
- * # disabled: (Feld wird zwar berücksichtigt beim Parsen der Quelldatei aber nicht importiert)
- */
 public final class FieldDescription {
 
     private String name;
@@ -53,31 +44,6 @@ public final class FieldDescription {
     private boolean ignoreIfMissing = false;
     
     private FieldDescription() {}
-
-    public static FieldDescription createDelimited(
-    		String name, 
-    		String className, 
-    		boolean nullable, 
-    		int delimiterPos, 
-    		int length, 
-    		String format, 
-    		String regex, 
-    		boolean trim, 
-    		boolean ignoreIfMissing) {
-    	FieldDescription fd = new FieldDescription();
-    	fd.setIndex(lastIndex++);
-    	fd.setName(name);
-    	fd.setNullEnabled(nullable);
-    	fd.setPositionType(DELIMITER_POSITION);
-    	fd.setDelimPos(delimiterPos);
-    	fd.setFilterRegex(regex);
-    	fd.setTrimRequired(trim);
-    	fd.setDataClassName(className);
-    	fd.setFormat(format);
-    	fd.computePositionType();
-    	fd.setIgnoreIfMissing(ignoreIfMissing);
-    	return fd;
-    }
     
     public static FieldDescription createDelimited(
     		String name, 
@@ -89,9 +55,10 @@ public final class FieldDescription {
     		String regex, 
     		boolean trim, 
     		boolean ignoreIfMissing, 
-    		String defaultValue) {
+    		String defaultValue,
+    		String alternative) {
     	FieldDescription fd = new FieldDescription();
-    	fd.setIndex(lastIndex++);
+    	fd.setSchemaColumnIndex(lastIndex++);
     	fd.setName(name);
     	fd.setNullEnabled(nullable);
     	fd.setPositionType(DELIMITER_POSITION);
@@ -103,30 +70,7 @@ public final class FieldDescription {
     	fd.computePositionType();
     	fd.setIgnoreIfMissing(ignoreIfMissing);
     	fd.setDefaultValue(defaultValue);
-    	return fd;
-    }
-
-    public static FieldDescription createAbsolutePos(
-    		String name, 
-    		String className, 
-    		boolean nullable, 
-    		int startPos, 
-    		int length, 
-    		String format, 
-    		String regex, 
-    		boolean trim) {
-    	FieldDescription fd = new FieldDescription();
-    	fd.setIndex(lastIndex++);
-    	fd.setName(name);
-    	fd.setNullEnabled(nullable);
-    	fd.setPositionType(ABSOLUTE_POSITION);
-    	fd.setAbsPos(startPos);
-    	fd.setLength(length);
-    	fd.setFilterRegex(regex);
-    	fd.setTrimRequired(trim);
-    	fd.setDataClassName(className);
-    	fd.setFormat(format);
-    	fd.computePositionType();
+    	fd.setAlternativeFieldDescriptionName(alternative);
     	return fd;
     }
 
@@ -139,9 +83,10 @@ public final class FieldDescription {
     		String format, 
     		String regex, 
     		boolean trim, 
-    		String defaultValue) {
+    		String defaultValue,
+    		String alternative) {
     	FieldDescription fd = new FieldDescription();
-    	fd.setIndex(lastIndex++);
+    	fd.setSchemaColumnIndex(lastIndex++);
     	fd.setName(name);
     	fd.setNullEnabled(nullable);
     	fd.setPositionType(ABSOLUTE_POSITION);
@@ -153,28 +98,7 @@ public final class FieldDescription {
     	fd.setFormat(format);
     	fd.computePositionType();
     	fd.setDefaultValue(defaultValue);
-    	return fd;
-    }
-
-    public static FieldDescription createRelativePos(
-    		String name, 
-    		String className, 
-    		boolean nullable, 
-    		int length, 
-    		String format, 
-    		String regex, 
-    		boolean trim) {
-    	FieldDescription fd = new FieldDescription();
-    	fd.setIndex(lastIndex++);
-    	fd.setName(name);
-    	fd.setNullEnabled(nullable);
-    	fd.setPositionType(RELATIVE_POSITION);
-    	fd.setLength(length);
-    	fd.setFilterRegex(regex);
-    	fd.setTrimRequired(trim);
-    	fd.setDataClassName(className);
-    	fd.setFormat(format);
-    	fd.computePositionType();
+    	fd.setAlternativeFieldDescriptionName(alternative);
     	return fd;
     }
 
@@ -186,9 +110,10 @@ public final class FieldDescription {
     		String format, 
     		String regex, 
     		boolean trim, 
-    		String defaultValue) {
+    		String defaultValue,
+    		String alternative) {
     	FieldDescription fd = new FieldDescription();
-    	fd.setIndex(lastIndex++);
+    	fd.setSchemaColumnIndex(lastIndex++);
     	fd.setName(name);
     	fd.setNullEnabled(nullable);
     	fd.setPositionType(RELATIVE_POSITION);
@@ -199,6 +124,7 @@ public final class FieldDescription {
     	fd.setFormat(format);
     	fd.computePositionType();
     	fd.setDefaultValue(defaultValue);
+    	fd.setAlternativeFieldDescriptionName(alternative);
     	return fd;
     }
 
@@ -250,7 +176,9 @@ public final class FieldDescription {
     }
 
     public void setAlternativeFieldDescriptionName(String alternativeFieldDescriptionName) {
-        this.alternativeFieldDescriptionName = alternativeFieldDescriptionName;
+    	if (alternativeFieldDescriptionName != null && alternativeFieldDescriptionName.trim().isEmpty() == false) {
+            this.alternativeFieldDescriptionName = alternativeFieldDescriptionName;
+    	}
     }
     
     public boolean isDummy() {
@@ -265,19 +193,19 @@ public final class FieldDescription {
         }
     }
 
-    public void setName(String name_loc) {
-        if (name_loc != null && name_loc.trim().length() == 0) {
-            name_loc = null;
+    public void setName(String name) {
+        if (name != null && name.trim().length() == 0) {
+        	name = null;
         }
-        this.name = name_loc;
+        this.name = name;
     }
 
     public int getBasicTypeId() {
         return basicType;
     }
 
-    public void setBasicTypeId(int basicType_loc) {
-        this.basicType = basicType_loc;
+    public void setBasicTypeId(int basicType) {
+        this.basicType = basicType;
         dataClassName = BasicDataType.getDataClassName(basicType);
     }
 
@@ -285,63 +213,66 @@ public final class FieldDescription {
         return format;
     }
 
-    public void setFormat(String format_loc) {
-        if (format_loc != null && format_loc.trim().length() == 0) {
+    public void setFormat(String format) {
+        if (format != null && format.trim().length() == 0) {
             this.format = null;
         } else {
-            this.format = format_loc;
+            this.format = format;
         }
     }
 
-    public int getIndex() {
+    public int getSchemaColumnIndex() {
         return index;
     }
 
-    public void setIndex(int index_loc) {
-        this.index = index_loc;
+    public void setSchemaColumnIndex(int index) {
+        this.index = index;
     }
 
     public int getDelimPos() {
         return delimPos;
     }
 
-    public void setDelimPos(int delimPos_loc) {
-        this.delimPos = delimPos_loc;
+    public void setDelimPos(int delimPos) {
+        this.delimPos = delimPos;
     }
 
     public int getAbsPos() {
         return absPos;
     }
 
-    public void setAbsPos(int absPos_loc) {
-        this.absPos = absPos_loc;
+    public void setAbsPos(int absPos) {
+        this.absPos = absPos;
     }
 
     public int getLength() {
         return length;
     }
 
-    public void setLength(int length_loc) {
-        this.length = length_loc;
+    public void setLength(int length) {
+        this.length = length;
     }
 
     public boolean isEnabled() {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled_loc) {
-        this.enabled = enabled_loc;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public int getPositionType() {
         return positionType;
     }
 
-    public void setPositionType(int positionType_loc) {
-        this.positionType = positionType_loc;
+    public void setPositionType(int positionType) {
+        this.positionType = positionType;
     }
 
     public boolean validate() {
+    	if (enabled == false) {
+    		return true;
+    	}
         valid = true;
         if ((name == null) || (name.length() == 0)) {
             errorMessage = "Name cannot be null or empty";
@@ -691,8 +622,21 @@ public final class FieldDescription {
 		sb.append(name);
 		sb.append(" #");
 		sb.append(index);
-		sb.append(" ,delim pos:");
-		sb.append(delimPos);
+		sb.append(" ,delim pos: ");
+		if (delimPos != -1) {
+			sb.append(delimPos);
+		} else {
+			sb.append("not set");
+		}
+		if (alternativeFieldDescriptionName != null) {
+			sb.append(", alternative: " + alternativeFieldDescriptionName);
+		}
+		if (defaultValue != null) {
+			sb.append(", defaultValue: " + defaultValue);
+		}
+		if (enabled == false) {
+			sb.append(" , disabled");
+		}
 		return sb.toString();
 	}
 	
@@ -702,6 +646,32 @@ public final class FieldDescription {
 		for (FieldDescription fd : list) {
 			System.out.println(listIndex++ + ":" + fd.getParameterString());
 		}
+	}
+	
+	public FieldDescription clone() {
+		FieldDescription clone = new FieldDescription();
+		clone.setAbsPos(absPos);
+		clone.setAlternativeFieldDescriptionName(alternativeFieldDescriptionName);
+		clone.setAlternativeFieldDescription(alternativeValueFieldDescription);
+		if (basicType != -1) {
+			clone.setBasicTypeId(basicType);
+		}
+		clone.setDataClassName(dataClassName);
+		clone.setDefaultValue(defaultValue);
+		clone.setDelimPos(delimPos);
+		clone.setEnabled(enabled);
+		clone.setFilterRegex(filterRegex);
+		clone.setFormat(format);
+		clone.setIgnoreDatasetIfInvalid(ignoreDatasetIfInvalid);
+		clone.setIgnoreIfMissing(ignoreIfMissing);
+		clone.setSchemaColumnIndex(index);
+		clone.setLength(length);
+		clone.setLocale(locale);
+		clone.setName(name);
+		clone.setNullEnabled(nullEnabled);
+		clone.setPositionType(positionType);
+		clone.setTrimRequired(trimRequired);
+		return clone;
 	}
 	
 }

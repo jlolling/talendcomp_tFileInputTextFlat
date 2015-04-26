@@ -13,6 +13,7 @@
 	boolean loadConfigFromFile = "true".equals(ElementParameterParser.getValue(node, "__LOAD_CONFIG_FROM_FILE__"));
 	boolean saveConfigToFile = "true".equals(ElementParameterParser.getValue(node, "__SAVE_CONFIG_TO_FILE__"));
 	String configFileToSave = ElementParameterParser.getValue(node, "__CONFIG_FILE_BACKUP__");
+	boolean allowFieldsNotFound = "true".equals(ElementParameterParser.getValue(node, "__ALLOW_FIELDS_NOT_FOUND_IN_CURRENT_FILE__"));
 %>
 		} // end of while of <%=cid%>
 	} finally { // finally from try of <%=cid%>
@@ -22,7 +23,7 @@
 	globalMap.put("<%=cid%>_NB_REJECTED", countRejects_<%=cid%>); 
 <%  if (loadConfigFromFile == false && saveConfigToFile) { %>
 	try {
-		<%=cid%>.saveConfigToFile(<%=configFileToSave%>);
+		<%=cid%>.saveConfigToFile(<%=configFileToSave%>, <%=allowFieldsNotFound%>);
 	} catch (Exception e) {
 		globalMap.put("<%=cid%>_ERROR_MESSAGE", e.getMessage());
 		throw e;	
