@@ -90,10 +90,10 @@ public class TestImport {
 		importer.setImportFile("/private/var/testdata/text/different_schemas/test_jan.csv");
 		importer.setFileCharset("UTF-8");
 		int pos = 0;
-		importer.addFieldDescription(FieldDescription.createDelimited("f1", "String", true, pos++, 0, null, null, false, false));
-		importer.addFieldDescription(FieldDescription.createDelimited("f4", "String", true, pos++, 0, null, null, false, false));
-		importer.addFieldDescription(FieldDescription.createDelimited("f2", "String", false, pos++, 0, null, null, false, false));
-		importer.addFieldDescription(FieldDescription.createDelimited("f3", "String", false, pos++, 0, null, null, false, false));
+		importer.addFieldDescription(FieldDescription.createDelimited("f1", "String", true, pos++, 0, null, null, false, false, null, null));
+		importer.addFieldDescription(FieldDescription.createDelimited("f4", "String", true, pos++, 0, null, null, false, false, null, null));
+		importer.addFieldDescription(FieldDescription.createDelimited("f2", "String", false, pos++, 0, null, null, false, false, null, null));
+		importer.addFieldDescription(FieldDescription.createDelimited("f3", "String", false, pos++, 0, null, null, false, false, null, null));
 //		importer.addFieldDescription(FieldDescription.createDelimited("f5", "String", true, pos++, 0, null, null, false, false));
 		importer.setDelimiter("|");
 		importer.setHasHeaderRow(true);
@@ -135,11 +135,11 @@ public class TestImport {
 		importer.setImportFile("/private/var/testdata/text/different_schemas/test_schema2.csv");
 		importer.setFileCharset("UTF-8");
 		int pos = 0;
-		importer.addFieldDescription(FieldDescription.createDelimited("customer.Type", "String", true, pos++, 0, null, null, false, false));
-		importer.addFieldDescription(FieldDescription.createDelimited("product", "String", true, pos++, 0, null, null, false, false));
-		importer.addFieldDescription(FieldDescription.createDelimited("f[3]", "String", false, pos++, 0, null, null, false, false));
-		importer.addFieldDescription(FieldDescription.createDelimited("F4", "String", false, pos++, 0, null, null, false, false));
-		importer.addFieldDescription(FieldDescription.createDelimited("f5", "String", true, pos++, 0, null, null, false, false));
+		importer.addFieldDescription(FieldDescription.createDelimited("customer.Type", "String", true, pos++, 0, null, null, false, false, null, null));
+		importer.addFieldDescription(FieldDescription.createDelimited("product", "String", true, pos++, 0, null, null, false, false, null, null));
+		importer.addFieldDescription(FieldDescription.createDelimited("f[3]", "String", false, pos++, 0, null, null, false, false, null, null));
+		importer.addFieldDescription(FieldDescription.createDelimited("F4", "String", false, pos++, 0, null, null, false, false, null, null));
+		importer.addFieldDescription(FieldDescription.createDelimited("f5", "String", true, pos++, 0, null, null, false, false, null, null));
 		importer.setDelimiter("|");
 		importer.setHasHeaderRow(true);
 		importer.setRowsToSkip(0);
@@ -237,116 +237,116 @@ public class TestImport {
 					de.jlo.talendcomp.flatfileimport.Importer importer) {
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_MAG", "String", true, 0,
-								0, "dd-MM-yyyy", null, true, true));
+								0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_KLT", "String", true, 1,
-								0, "dd-MM-yyyy", null, true, true));
+								0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_PLT", "String", true, 2,
-								0, "dd-MM-yyyy", null, true, true));
+								0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_PRAC", "String", true, 3,
-								0, "dd-MM-yyyy", null, true, true));
+								0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("NAZWA", "String", true, 4, 0,
-								"dd-MM-yyyy", null, true, true));
+								"dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("SKROT", "String", true, 5, 0,
-								"dd-MM-yyyy", null, true, true));
+								"dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_W", "String", true, 6, 0,
-								"dd-MM-yyyy", null, true, true));
+								"dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_P", "String", true, 7, 0,
-								"dd-MM-yyyy", null, true, true));
+								"dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("MIASTO", "String", true, 8,
-								0, "dd-MM-yyyy", null, true, true));
+								0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("KOD", "String", true, 9, 0,
-								"dd-MM-yyyy", null, true, true));
+								"dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ULICA", "String", true, 10,
-								0, "dd-MM-yyyy", null, true, true));
+								0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("NR_LOK", "String", true, 11,
-								0, "dd-MM-yyyy", null, true, true));
+								0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("NIP", "String", true, 12, 0,
-								"dd-MM-yyyy", null, true, true));
+								"dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("TEL", "String", true, 13, 0,
-								"dd-MM-yyyy", null, true, true));
+								"dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("KOM", "String", true, 14, 0,
-								"dd-MM-yyyy", null, true, true));
+								"dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("FAX", "String", true, 15, 0,
-								"dd-MM-yyyy", null, true, true));
+								"dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("EMAIL", "String", true, 16,
-								0, "dd-MM-yyyy", null, true, true));
+								0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("RABAT", "Float", true, 17, 0,
-								"dd-MM-yyyy", null, true, true));
+								"dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_FOR_PLT", "String", true,
-								18, 0, "dd-MM-yyyy", null, true, true));
+								18, 0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("TER_PLT", "Integer", true,
-								19, 0, "dd-MM-yyyy", null, true, true));
+								19, 0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_CENNIK", "String", true,
-								20, 0, "dd-MM-yyyy", null, true, true));
+								20, 0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_GC_KLT", "String", true,
-								21, 0, "dd-MM-yyyy", null, true, true));
+								21, 0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_GL_KLT", "String", true,
-								22, 0, "dd-MM-yyyy", null, true, true));
+								22, 0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_GR_KLT", "String", true,
-								23, 0, "dd-MM-yyyy", null, true, true));
+								23, 0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_GRX_KLT", "String", true,
-								24, 0, "dd-MM-yyyy", null, true, true));
+								24, 0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("LIM_KRED", "Float", true, 25,
-								0, "dd-MM-yyyy", null, true, true));
+								0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("SALDO_PLT", "Float", true,
-								26, 0, "dd-MM-yyyy", null, true, true));
+								26, 0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("LIM_PRZET", "Float", true,
-								27, 0, "dd-MM-yyyy", null, true, true));
+								27, 0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("SALDO_PRZET", "Float", true,
-								28, 0, "dd-MM-yyyy", null, true, true));
+								28, 0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("WSK_BLOK", "Integer", true,
-								29, 0, "en", null, true, true));
+								29, 0, "en", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_TYP_KLT", "String", true,
-								30, 0, "dd-MM-yyyy", null, true, true));
+								30, 0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_KAT_KLT", "String", true,
-								31, 0, "dd-MM-yyyy", null, true, true));
+								31, 0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_SIEC", "String", true, 32,
-								0, "dd-MM-yyyy", null, true, true));
+								0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_POW", "String", true, 33,
-								0, "dd-MM-yyyy", null, true, true));
+								0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_ST_KLT", "String", true,
-								34, 0, "dd-MM-yyyy", null, true, true));
+								34, 0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ST_MOB", "Integer", true, 35,
-								0, "dd-MM-yyyy", null, true, true));
+								0, "dd-MM-yyyy", null, true, true, null, null));
 				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("WSK_DOMYSLNY", "Integer",
 								true, 36, 0, "dd-MM-yyyy", null, true,
-								true));
+								true, null, null));
 			} // end of configureFields
 
 			public void fillOutputFlow(
@@ -485,8 +485,8 @@ public class TestImport {
 		Importer importer = new Importer();
 		importer.setImportFile("/home/jlolling/test/text/bigdecimal_de.csv");
 		importer.setFileCharset("UTF-8");
-		importer.addFieldDescription(FieldDescription.createDelimited("value", "BigDecimal", false, 0, 0, "de", null, false, false));
-		importer.addFieldDescription(FieldDescription.createDelimited("value", "Double", false, 1, 0, "de", null, false, false));
+		importer.addFieldDescription(FieldDescription.createDelimited("value", "BigDecimal", false, 0, 0, "de", null, false, false, null, null));
+		importer.addFieldDescription(FieldDescription.createDelimited("value", "Double", false, 1, 0, "de", null, false, false, null, null));
 		importer.setDelimiter("|");
 		importer.initialize();
 		int line = 0;
@@ -510,7 +510,7 @@ public class TestImport {
 		Importer importer = new Importer();
 		importer.setImportFile("/var/testdata/text/bom_test.txt");
 		importer.setFileCharset("UTF-8");
-		importer.addFieldDescription(FieldDescription.createDelimited("content", "String", false, 0, 0, null, null, false, false));
+		importer.addFieldDescription(FieldDescription.createDelimited("content", "String", false, 0, 0, null, null, false, false, null, null));
 		importer.setDelimiter("|");
 		try {
 			importer.initialize();
@@ -534,5 +534,5 @@ public class TestImport {
 		}
 		importer.close();
 	}
-
+	
 }

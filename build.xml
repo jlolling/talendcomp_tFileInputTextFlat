@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<project name="talend_component" default="comp" basedir=".">
+<project name="talend_component" default="comp" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
 	<property name="project" location="." />
 	<property name="src" location="src" />
@@ -11,6 +11,14 @@
 	<property name="appfilename_wo_ext" value="jlo.talendcomp.flatfileimport" />
     <property name="componentname" value="tFileInputTextFlat" />
 	
+    <target name="resolve" description="--> retreive dependencies with ivy">
+        <ivy:retrieve/>
+    </target>    
+ 
+	<path id="project.class.path">
+		<fileset dir="${lib}" includes="**/*.jar" />
+	</path>
+
 	<target name="loadversion" description="Initalize">
 		<loadfile property="version" srcFile="${src}/VERSION" >
 			<filterchain>
@@ -25,8 +33,9 @@
 		<mkdir dir="${bin}" />
 	</target>
 
-	<target name="compile" depends="clean" description="compile the source">
+	<target name="compile" depends="clean, resolve" description="compile the source">
 		<javac
+			classpathref="project.class.path"
 		    debug="true"
 		    deprecation="true"
 		    nowarn="false"
@@ -60,6 +69,8 @@
 	    <mkdir dir="${distrib}"/>
 		<delete failonerror="false">
 			<fileset dir="${distrib}">
+				<exclude name="*javadoc.jar" />
+				<exclude name="*sources.jar" />
 				<include name="*.jar" />
 				<include name="*src.zip" />
 			</fileset>
@@ -78,6 +89,13 @@
 			</fileset>
 		</delete>
 		<copy todir="talend_component/${componentname}/" file="${distrib}/${jarfilename}" />
+		<copy todir="talend_component/${componentname}/" >
+			<fileset dir="${lib}">
+				<exclude name="*javadoc.jar" />
+				<exclude name="*sources.jar" />
+				<include name="commons-lang3*.jar" />
+			</fileset>
+		</copy>
 	</target>
 
 </project>

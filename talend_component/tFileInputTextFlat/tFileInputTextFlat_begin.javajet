@@ -113,11 +113,13 @@
 	String debug = ElementParameterParser.getValue(node, "__DEBUG__");
 	boolean loadConfigFromFile = "true".equals(ElementParameterParser.getValue(node, "__LOAD_CONFIG_FROM_FILE__"));
 	String configFile = ElementParameterParser.getValue(node, "__CONFIG_FILE__");
+	boolean limitLength = "true".equals(ElementParameterParser.getValue(node, "__LIMIT_STRING_CONTENT_TO_LENGTH__"));
 %>
     // <%=mainConnName%> , <%=rejectConnName%>
 	de.jlo.talendcomp.flatfileimport.Importer <%=cid%> = new de.jlo.talendcomp.flatfileimport.Importer();
 	<%=cid%>.setDebug(<%=debug%>);
 	<%=cid%>.setImportFile(<%=file%>);
+	globalMap.put("<%=cid%>_FILENAME", <%=cid%>.getImportFile()); 
 	<%=cid%>.skipBOM(<%=skipBOM%>);
 	<%=cid%>.setSkipEmptyLines(<%=skipEmptyLines%>);
 	<%=cid%>.setHasHeaderRow(<%=hasColumnHeaderLine%>);
@@ -140,6 +142,7 @@
 	final class ImportHelper_<%=cid%> {
 	
 		public void configureFields(de.jlo.talendcomp.flatfileimport.Importer importer) {
+		<%=(limitLength ? "// limit length for delimited fields" : "") %>
 <%  if (loadConfigFromFile == false) {
       for (columnIndex = 0; columnIndex < listColumns.size(); columnIndex++) {
 		IMetadataColumn column = listColumns.get(columnIndex);
@@ -151,6 +154,12 @@
 		String pos = positionMap.get(columnName);
 		String posType = posTypeMap.get(columnName);
 		String length = lengthMap.get(columnName);
+		if ("0".equals(length)) {
+			Integer cl = column.getLength();
+			if (cl != null) {
+				length = String.valueOf(cl);
+			}
+		}
 		if ("Date".equals(type) || "Timestamp".equals(type)) {
 			pattern = column.getPattern();
 			if (pattern == null || pattern.trim().isEmpty()) {
@@ -182,7 +191,7 @@
 				"<%=type%>", // type
 				<%=column.isNullable()%>, // nullable 
 				<%=pos%>, // pos
-				<%=length%>, // length
+				<%=(limitLength ? length : "0") %>, // length
 				<%=pattern%>, // pattern
 				<%=regex%>, // regex
 				<%=trim%>, // trim
