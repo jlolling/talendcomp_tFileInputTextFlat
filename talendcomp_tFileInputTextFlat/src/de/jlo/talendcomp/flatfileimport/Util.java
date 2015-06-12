@@ -1,3 +1,18 @@
+/**
+ * Copyright 2015 Jan Lolling jan.lolling@gmail.com
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.jlo.talendcomp.flatfileimport;
 
 import java.math.BigDecimal;
@@ -6,18 +21,18 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import de.jlo.talendcomp.GenericDateUtil;
+import org.apache.commons.lang3.time.FastDateFormat;
+
+import de.jlo.talendcomp.TolerantDateParser;
 
 public final class Util {
 	
 	private final Map<String, DecimalFormat> numberformatMap = new HashMap<String, DecimalFormat>();
-	private final Map<String, SimpleDateFormat> dateformatMap = new HashMap<String, SimpleDateFormat>();
 	
 	public Util() {}
 	
@@ -31,15 +46,6 @@ public final class Util {
 		return nf;
 	}
 	
-	public SimpleDateFormat getDateFormat(String format) {
-		SimpleDateFormat df = dateformatMap.get(format);
-		if (df == null) {
-			df = new SimpleDateFormat(format);
-			dateformatMap.put(format, df);
-		}
-		return df;
-	}
-
 	public Object convertToDatatype(String value, String dataType, String options) throws Exception {
 		if ("String".equals(dataType)) {
 			if (value == null || value.isEmpty()) {
@@ -86,12 +92,12 @@ public final class Util {
 			throw new Exception("pattern cannot be null or empty");
 		}
 		try {
-			SimpleDateFormat sdf = getDateFormat(pattern);
+			FastDateFormat sdf = FastDateFormat.getInstance(pattern);
 			Date date = null;
 			try {
 				date = sdf.parse(dateString);
 			} catch (ParseException pe) {
-				date = GenericDateUtil.parseDate(dateString);
+				date = TolerantDateParser.parseDate(dateString);
 			}
 			return date;
 		} catch (Throwable t) {

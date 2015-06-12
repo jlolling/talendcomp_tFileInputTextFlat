@@ -1,3 +1,18 @@
+/**
+ * Copyright 2015 Jan Lolling jan.lolling@gmail.com
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.jlo.talendcomp.flatfileimport;
 
 import java.io.File;
@@ -32,6 +47,14 @@ public final class Importer {
 	
 	public void setImportFile(String file) {
 		inputFile = new File(file);
+	}
+	
+	public String getImportFile() {
+		if (inputFile != null) {
+			return inputFile.getAbsolutePath();
+		} else {
+			return null;
+		}
 	}
 
     private ArrayList<Integer> collectFieldDescriptionIndexes(Properties properties) {
@@ -542,7 +565,7 @@ public final class Importer {
     			if (temp.isEnabled() == false) {
     				temp.setEnabled(true);
     			}
-    			if (temp.getPositionType() == FieldDescription.DELIMITER_POSITION && temp.getDelimPos() == -1) {
+    			if ((temp.getPositionType() == FieldDescription.DELIMITER_POSITION || temp.getPositionType() == FieldDescription.DELIMITER_POSITION_WITH_LENGTH) && temp.getDelimPos() == -1) {
     				temp.setDelimPos(lastPos++);
     			}
         		temp.fillInProperties(props);
