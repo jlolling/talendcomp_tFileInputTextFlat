@@ -1,6 +1,6 @@
 <COMPONENT>
-	<HEADER PLATEFORM="ALL" SERIAL="" VERSION="4.0" STATUS="PROD"
-		COMPATIBILITY="ALL" AUTHOR="Jan Lolling" RELEASE_DATE="20150612A"
+	<HEADER PLATEFORM="ALL" SERIAL="" VERSION="4.1" STATUS="PROD"
+		COMPATIBILITY="ALL" AUTHOR="Jan Lolling" RELEASE_DATE="20160611A"
 		STARTABLE="true" HAS_CONDITIONAL_OUTPUTS="true">
 		<SIGNATURE />
 	</HEADER>
@@ -206,7 +206,7 @@
 			<IMPORT NAME="japache-commons-lang3"
 				MODULE="commons-lang3-3.4.jar" REQUIRED="true" />
 			<IMPORT NAME="jlo.talendcomp.flatfileimport"
-				MODULE="jlo.talendcomp.flatfileimport-4.0.jar" REQUIRED="true" />
+				MODULE="jlo.talendcomp.flatfileimport-4.1.jar" REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
 

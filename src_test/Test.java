@@ -1,6 +1,7 @@
+import de.cimt.talendcomp.test.TalendFakeJob;
 import de.jlo.talendcomp.TolerantDateParser;
 
-public class Test extends TalendTest {
+public class Test extends TalendFakeJob {
 	
 	public static void main(String[] args) {
 		Test t = new Test();

@@ -99,7 +99,7 @@ public class TolerantDateParser {
 	
 	private Date parseDateTolerant(String text) throws Exception {
 		if (parsers.isEmpty()) {
-			throw new IllegalStateException("No parser initialised!");
+			throw new IllegalStateException("No parsers initialised!");
 		}
 		if (text != null && text.trim().isEmpty() == false) {
 			for (FastDateFormat f : parsers) {

@@ -11,10 +11,6 @@
 	<property name="appfilename_wo_ext" value="jlo.talendcomp.flatfileimport" />
     <property name="componentname" value="tFileInputTextFlat" />
 	
-    <target name="resolve" description="--> retreive dependencies with ivy">
-        <ivy:retrieve/>
-    </target>    
- 
 	<path id="project.class.path">
 		<fileset dir="${lib}" includes="**/*.jar" />
 	</path>
@@ -33,7 +29,7 @@
 		<mkdir dir="${bin}" />
 	</target>
 
-	<target name="compile" depends="clean, resolve" description="compile the source">
+	<target name="compile" depends="clean" description="compile the source">
 		<javac
 			classpathref="project.class.path"
 		    debug="true"

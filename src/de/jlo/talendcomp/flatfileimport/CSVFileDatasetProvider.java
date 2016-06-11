@@ -169,9 +169,6 @@ public final class CSVFileDatasetProvider implements DatasetProvider {
 			} else {
 				// all content chars
 				line.append(c);
-				if (last_c == enclosure) {
-					inEclosuredField = true;
-				}
 			}
 			last_c = c;
 		}
