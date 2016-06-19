@@ -15,6 +15,7 @@
  */
 package de.jlo.talendcomp.flatfileimport;
 
+import java.io.BufferedReader;
 import java.io.File;
 
 public interface DatasetProvider {
@@ -32,5 +33,7 @@ public interface DatasetProvider {
     void skipEmptyLines(boolean skip);
     
     boolean isSkipEmptyLines();
+
+	void setupDatasetProvider(BufferedReader reader, ImportAttributes properties) throws Exception;
 
 }

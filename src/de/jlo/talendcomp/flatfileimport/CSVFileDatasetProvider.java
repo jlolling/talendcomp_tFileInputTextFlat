@@ -65,16 +65,22 @@ public final class CSVFileDatasetProvider implements DatasetProvider {
 
 	@Override
 	public void setupDatasetProvider(File file, ImportAttributes properties) throws Exception {
+		BufferedReader reader = new BufferedReader(
+				new InputStreamReader(
+				new FileInputStream(
+						file), 
+						properties.getCharsetName()));
+		setupDatasetProvider(reader, properties);
+	}
+
+	@Override
+	public void setupDatasetProvider(BufferedReader reader, ImportAttributes properties) throws Exception {
 		if (properties.isIgnoreLineBreakInEnclosedValues()) {
 			setEncloser(properties.getEnclosure());
 		}
 		skipEmptyLines = properties.isSkipEmptyLines();
 		ignoreBOM = properties.isIgnoreBOM();
-		bufferedReader = new BufferedReader(
-				new InputStreamReader(
-				new FileInputStream(
-						file), 
-						properties.getCharsetName()));
+		bufferedReader = reader;
 		currentRowNum = 0;
 		currentLine = null;
 	}
@@ -136,7 +142,6 @@ public final class CSVFileDatasetProvider implements DatasetProvider {
 	private String readLineWithEnclosure() throws IOException {
 		StringBuilder line = new StringBuilder();
 		boolean inEclosuredField = false;
-		char last_c = (char) 0;
 		while (true) {
 			int r = bufferedReader.read();
 			if (r == -1) {
@@ -148,8 +153,7 @@ public final class CSVFileDatasetProvider implements DatasetProvider {
 			}
 			char c = (char) r;
 			if (c == enclosure) {
-				if (inEclosuredField || last_c == enclosure) {
-					// end of enclosed field found
+				if (inEclosuredField) {
 					inEclosuredField = false;
 				} else {
 					// start of enclosed field found
@@ -170,7 +174,6 @@ public final class CSVFileDatasetProvider implements DatasetProvider {
 				// all content chars
 				line.append(c);
 			}
-			last_c = c;
 		}
 		return line.toString();
 	}
