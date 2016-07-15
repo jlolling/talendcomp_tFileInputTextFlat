@@ -30,11 +30,11 @@ import org.apache.commons.lang3.time.FastDateFormat;
 
 import de.jlo.talendcomp.TolerantDateParser;
 
-public final class Util {
+public final class TypeUtil {
 	
 	private final Map<String, DecimalFormat> numberformatMap = new HashMap<String, DecimalFormat>();
 	
-	public Util() {}
+	public TypeUtil() {}
 	
 	public DecimalFormat getNumberFormat(String localeStr) {
 		DecimalFormat nf = (DecimalFormat) numberformatMap.get(localeStr);

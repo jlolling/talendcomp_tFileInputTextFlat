@@ -29,7 +29,7 @@ public abstract class AbstractFieldTokenizer implements FieldTokenizer {
     private final List<Object> fieldDataList = new ArrayList<Object>(100);
     protected List<FieldDescription> descriptions;
     private boolean ignoreNotNullConstraints = false;
-    private Util util = new Util();
+    private TypeUtil typeUtil = new TypeUtil();
     protected boolean debug = false;
 
     protected int getListDataSize() {
@@ -121,7 +121,7 @@ public abstract class AbstractFieldTokenizer implements FieldTokenizer {
     protected Object convertStringValue(FieldDescription fd, String strValue) throws ParserException {
         Object value = null;
     	try {
-    		value = util.convertToDatatype(strValue, fd.getDataClassName(), fd.getFieldFormat());
+    		value = typeUtil.convertToDatatype(strValue, fd.getDataClassName(), fd.getFieldFormat());
 		} catch (Exception e) {
 			throw new ParserException("Column " + fd.getName() + " convert value failed:" + e.getMessage(), e);
 		}
