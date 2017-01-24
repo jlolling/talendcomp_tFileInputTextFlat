@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 /**
  *
- * @author jan
+ * @author jan.lolling@gmail.com
  */
 public abstract class AbstractFieldTokenizer implements FieldTokenizer {
 
@@ -57,7 +57,8 @@ public abstract class AbstractFieldTokenizer implements FieldTokenizer {
     	return fieldDataList;
     }
 
-    public List<String> getHeaderData() {
+    @Override
+	public List<String> getHeaderData() {
     	List<String> headers = new ArrayList<String>();
     	for (Object o : fieldDataList) {
     		headers.add(o.toString());
@@ -86,7 +87,8 @@ public abstract class AbstractFieldTokenizer implements FieldTokenizer {
         return descriptions.get(index).getAlternativeFieldDescription();
     }
 
-    public void setFieldDescriptions(List<FieldDescription> listDescriptions) {
+    @Override
+	public void setFieldDescriptions(List<FieldDescription> listDescriptions) {
 		if (listDescriptions == null || listDescriptions.isEmpty()) {
 			throw new IllegalArgumentException("listDescriptions cannot be empty or null");
 		}
@@ -139,10 +141,12 @@ public abstract class AbstractFieldTokenizer implements FieldTokenizer {
 		this.ignoreNotNullConstraints = ignoreNotNullConstraints;
 	}
 
+	@Override
 	public boolean isDebug() {
 		return debug;
 	}
 
+	@Override
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}

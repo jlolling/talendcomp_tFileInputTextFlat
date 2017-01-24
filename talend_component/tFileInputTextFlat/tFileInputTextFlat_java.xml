@@ -205,8 +205,8 @@
 		<IMPORTS>
 			<IMPORT NAME="japache-commons-lang3"
 				MODULE="commons-lang3-3.4.jar" REQUIRED="true" />
-			<IMPORT NAME="jlo.talendcomp.flatfileimport"
-				MODULE="jlo.talendcomp.flatfileimport-4.2.jar" REQUIRED="true" />
+			<IMPORT NAME="cimt-talendcomp-flatfileimport"
+				MODULE="cimt-talendcomp-flatfileimport-4.2.jar" REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
 
