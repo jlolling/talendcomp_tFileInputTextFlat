@@ -116,7 +116,7 @@
 	boolean limitLength = "true".equals(ElementParameterParser.getValue(node, "__LIMIT_STRING_CONTENT_TO_LENGTH__"));
 %>
     // <%=mainConnName%> , <%=rejectConnName%>
-	de.jlo.talendcomp.flatfileimport.Importer <%=cid%> = new de.jlo.talendcomp.flatfileimport.Importer();
+	de.cimt.talendcomp.flatfileimport.Importer <%=cid%> = new de.cimt.talendcomp.flatfileimport.Importer();
 	<%=cid%>.setDebug(<%=debug%>);
 	<%=cid%>.setImportFile(<%=file%>);
 	globalMap.put("<%=cid%>_FILENAME", <%=cid%>.getImportFile()); 
@@ -141,7 +141,7 @@
 	// helper to configure fields and get values
 	final class ImportHelper_<%=cid%> {
 	
-		public void configureFields(de.jlo.talendcomp.flatfileimport.Importer importer) {
+		public void configureFields(de.cimt.talendcomp.flatfileimport.Importer importer) {
 		<%=(limitLength ? "// limit length for delimited fields" : "") %>
 <%  if (loadConfigFromFile == false) {
       for (columnIndex = 0; columnIndex < listColumns.size(); columnIndex++) {
@@ -186,7 +186,7 @@
 			alternative = "null";
 		}
 		if ("DEL".equals(posType)) { %>
-			importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription.createDelimited(
+			importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription.createDelimited(
 				"<%=header != null ? header : columnName%>", // columnName
 				"<%=type%>", // type
 				<%=column.isNullable()%>, // nullable 
@@ -199,7 +199,7 @@
 				<%=defaultValue%>, // defaultValue
 				<%=alternative%>)); // alternative
 <%      } else if ("ABS".equals(posType) && "-1".equals(pos)) { %>
-			importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription.createRelativePos(
+			importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription.createRelativePos(
 				"<%=header != null ? header : columnName%>", // columnName
 				"<%=type%>", // type
 				<%=column.isNullable()%>, // nullable 
@@ -210,7 +210,7 @@
 				<%=defaultValue%>, // defaultValue
 				<%=alternative%>)); // alternative
 <%      } else if ("ABS".equals(posType) && "-1".equals(pos) == false) { %>
-			importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription.createAbsolutePos(
+			importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription.createAbsolutePos(
 				"<%=header != null ? header : columnName%>", // columnName 
 				"<%=type%>", // type
 				<%=column.isNullable()%>, // nullable 
@@ -228,7 +228,7 @@
    } // if (loadFromConfigFile %>    
 		} // end of configureFields
 		
-		public void fillOutputFlow(de.jlo.talendcomp.flatfileimport.Importer importer, <%=mainConnName%>Struct flow) throws Exception {
+		public void fillOutputFlow(de.cimt.talendcomp.flatfileimport.Importer importer, <%=mainConnName%>Struct flow) throws Exception {
 <%  for (columnIndex = 0; columnIndex < listColumns.size(); columnIndex++) {
 		IMetadataColumn column = listColumns.get(columnIndex);
 		String columnName = column.getLabel();
