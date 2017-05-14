@@ -1,4 +1,4 @@
-package de.cimt.talendcomp.flatfileimport;
+package de.jlo.talendcomp.flatfileimport;
 
 import de.cimt.talendcomp.test.TalendFakeJob;
 
@@ -19,7 +19,7 @@ public class Test extends TalendFakeJob {
 		
 		row1Struct row1 = null;
 		// row1 ,
-		de.cimt.talendcomp.flatfileimport.Importer tFileInputTextFlat_2 = new de.cimt.talendcomp.flatfileimport.Importer();
+		de.jlo.talendcomp.flatfileimport.Importer tFileInputTextFlat_2 = new de.jlo.talendcomp.flatfileimport.Importer();
 		tFileInputTextFlat_2.setDebug(true);
 		tFileInputTextFlat_2
 				.setImportFile("/private/var/testdata/text/different_schemas/regex/Input_File.csv");
@@ -37,8 +37,8 @@ public class Test extends TalendFakeJob {
 		final class ImportHelper_tFileInputTextFlat_2 {
 
 			public void configureFields(
-					de.cimt.talendcomp.flatfileimport.Importer importer) {
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+					de.jlo.talendcomp.flatfileimport.Importer importer) {
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("*contact.*number*", // columnName
 								"String", // type
 								true, // nullable
@@ -50,7 +50,7 @@ public class Test extends TalendFakeJob {
 								false, // ignoreMissing
 								"99", // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("*(external).*(reference)*", // columnName
 								"Double", // type
 								true, // nullable
@@ -62,7 +62,7 @@ public class Test extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited(
 								"pp_product|product.purchased", // columnName
 								"String", // type
@@ -75,7 +75,7 @@ public class Test extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								"Fundraiser")); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited(
 								"pp.start.date|date.DDI.signed", // columnName
 								"Date", // type
@@ -88,7 +88,7 @@ public class Test extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited(
 								"payment.plan.number|order.number", // columnName
 								"Long", // type
@@ -101,7 +101,7 @@ public class Test extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("Fundraiser", // columnName
 								"String", // type
 								true, // nullable
@@ -116,7 +116,7 @@ public class Test extends TalendFakeJob {
 			} // end of configureFields
 
 			public void fillOutputFlow(
-					de.cimt.talendcomp.flatfileimport.Importer importer,
+					de.jlo.talendcomp.flatfileimport.Importer importer,
 					row1Struct flow) throws Exception {
 				flow.ContactNumber = importer.getStringAt(0, true);
 				flow.ExternalReference = importer.getDoubleAt(1, true);

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.cimt.talendcomp.flatfileimport;
+package de.jlo.talendcomp.flatfileimport;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -24,8 +24,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
-import de.cimt.talendcomp.GenericDateUtil;
 
 public final class TypeUtil {
 	

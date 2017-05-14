@@ -1,4 +1,4 @@
-package de.cimt.talendcomp;
+package de.jlo.talendcomp.flatfileimport;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -6,17 +6,18 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Utility class to parse a String into a Date 
  * by testing a number of common pattern
  * This class is thread save.
  * 
- * @author jan.lolling@cimt-ag.de
+ * @author jan.lolling@gmail.de
  */
 public class GenericDateUtil {
 	
-	private static ThreadLocal<DateParser> threadLocal = new ThreadLocal<DateParser>();
+	public static final long ZERO_TIME = -62170160400000l;
 	
     /**
      * parseDuration: returns the Date from the given text representation containing the time part as duration
@@ -73,19 +74,35 @@ public class GenericDateUtil {
      * @return Date object representing the Date
      */
 	public static Date parseDate(String source, String ...suggestedPattern) throws ParseException {
-		return getDateParser().parseDate(source, suggestedPattern);
+		return getDateParser().parseDate(source, null, suggestedPattern);
 	}
 	
-	private static DateParser getDateParser() {
-		DateParser p = threadLocal.get();
-		if (p == null) {
-			p = new DateParser();
-			threadLocal.set(p);
-		}
+	/**
+     * parseDate: returns the Date from the given text representation
+     * Tolerates if the content does not fit to the given pattern and retries it
+     * with build in patterns
+     * 
+     * @param source the formatted time as String
+     * @param suggestedPattern an array of suggested patterns
+     * @return Date object representing the Date
+     */
+	public static Date parseDate(String source, Locale locale, String ...suggestedPattern) throws ParseException {
+		return getDateParser().parseDate(source, locale, suggestedPattern);
+	}
+
+	public static DateParser getDateParser() {
+		DateParser p = new DateParser();
+		p.setLenient(true);
 		return p;
 	}
 	
-	private static class DateParser {
+	public static DateParser getDateParser(boolean lenient) {
+		DateParser p = new DateParser();
+		p.setLenient(lenient);
+		return p;
+	}
+
+	public static class DateParser {
 		
 		private List<String> datePatternList = null;
 		private List<String> timePatternList = null;
@@ -95,42 +112,53 @@ public class GenericDateUtil {
 		private static final int HOURS_PER_DAY = 24;
 		private static final int SECONDS_PER_DAY = (HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE);
 		private static final long DAY_MILLISECONDS = SECONDS_PER_DAY * 1000L;
+		private boolean lenient = false;
 		
-		DateParser() {
+		public void init() {
 			datePatternList = new ArrayList<String>();
 			datePatternList.add("yyyy-MM-dd");
-			datePatternList.add("dd.MM.yyyy");
-			datePatternList.add("d.MM.yyyy");
 			datePatternList.add("d.M.yy");
 			datePatternList.add("dd.MM.yy");
+			datePatternList.add("d.MM.yyyy");
+			datePatternList.add("dd.MM.yyyy");
 			datePatternList.add("dd.MMM.yyyy");
-			datePatternList.add("MM/dd/yyyy");
 			datePatternList.add("MM/dd/yy");
+			datePatternList.add("MM/dd/yyyy");
 			datePatternList.add("M/d/yy");
 			datePatternList.add("dd/MM/yyyy");
 			datePatternList.add("dd/MM/yy");
 			datePatternList.add("dd/MMM/yyyy");
 			datePatternList.add("dd. MMMM yyyy");
+			datePatternList.add("dd. MMM. yyyy");
 			datePatternList.add("dd. MMM yyyy");
 			datePatternList.add("MMMM dd'th' yyyy");
 			datePatternList.add("MMM dd'th' yyyy");
 			datePatternList.add("dd'th' MMMM yyyy");
 			datePatternList.add("dd'th' MMM yyyy");
-			datePatternList.add("dd-MM-yyyy");
+			datePatternList.add("'KW' w/yyyy");
+			datePatternList.add("'w/c' w.yyyy");
+			datePatternList.add("'CW' w.yyyy");
+			datePatternList.add("MMMM yyyy");
 			datePatternList.add("dd-MM-yy");
+			datePatternList.add("dd-MM-yyyy");
 			datePatternList.add("dd-MMM-yyyy");
 			datePatternList.add("d-M-yy");
 			datePatternList.add("yyyyMMdd");
 			datePatternList.add("yyyyMM");
 			datePatternList.add("yyyy");
 			timePatternList = new ArrayList<String>();
-			timePatternList.add(" mm'′'ss'″'");
 			timePatternList.add(" mm''ss'\"'");
+			timePatternList.add(" mm''ss'“'");
+			timePatternList.add(" mm''ss'”'");
+			timePatternList.add(" mm'‘'ss'“'");
+			timePatternList.add(" mm'’'ss'”'");
+			timePatternList.add(" mm'′'ss'″'");
 			timePatternList.add(" HH'h'mm'm'ss's'");
 			timePatternList.add(" HH'h'mm'm'");
 			timePatternList.add(" mm'm'ss's'");
 			timePatternList.add("'T'HH:mm:ss.SSSZ");
 			timePatternList.add("'T'HH:mm:ss.SSS");
+			timePatternList.add(" hh:mm:ss a");
 			timePatternList.add(" HH:mm:ss.SSS");
 			timePatternList.add(" HH:mm:ss");
 			timePatternList.add(" mm:ss");
@@ -138,7 +166,15 @@ public class GenericDateUtil {
 			timePatternList.add(" mmss");
 		}
 		
-		private Date parseDate(String text, String ... userPattern) throws ParseException {
+		DateParser() {
+			init();
+		}
+		
+		public Date parseDate(String text, String ... userPattern) throws ParseException {
+			return parseDate(text, null, userPattern);
+		}
+
+		public Date parseDate(String text, Locale locale, String ... userPattern) throws ParseException {
 			if (text != null && text.trim().isEmpty() == false) {
 				Date dateValue = null;
 				if (userPattern != null) {
@@ -149,7 +185,11 @@ public class GenericDateUtil {
 						datePatternList.add(0, userPattern[i]);
 					}
 				}
-				SimpleDateFormat sdf = new SimpleDateFormat();
+				if (locale == null) {
+					locale = Locale.ENGLISH;
+				}
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", locale);
+				sdf.setLenient(lenient);
 				for (String pattern : datePatternList) {
 					if (pattern != null) {
 						sdf.applyPattern(pattern.trim());
@@ -223,12 +263,20 @@ public class GenericDateUtil {
 		        int millisecondsInDay = (int) ((timeInExcel - wholeDays) * DAY_MILLISECONDS + 0.5);
 		        Calendar cal = Calendar.getInstance(getUTCTimeZone());
 		        cal.setTimeInMillis(0);
-		        cal.set(Calendar.DAY_OF_YEAR, wholeDays + 1);
 		        cal.set(Calendar.MILLISECOND, millisecondsInDay);
 		        return cal.getTimeInMillis();
 			} else {
 				return null;
 			}
+		}
+
+		public boolean isLenient() {
+			return lenient;
+		}
+
+		public DateParser setLenient(boolean lenient) {
+			this.lenient = lenient;
+			return this;
 		}
 
 	}
@@ -240,6 +288,30 @@ public class GenericDateUtil {
     		utcTimeZone = java.util.TimeZone.getTimeZone("UTC");
     	}
     	return utcTimeZone;
+    }
+    
+    public static boolean isZeroDate(Date date) {
+    	if (date != null) {
+    		Calendar cal = Calendar.getInstance(getUTCTimeZone());
+    		cal.setTime(date);
+    		cal.setLenient(false);
+        	cal.set(java.util.Calendar.MINUTE, 0);
+        	cal.set(java.util.Calendar.SECOND, 0);
+        	cal.set(java.util.Calendar.MILLISECOND, 0);
+        	cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+    		int year = cal.get(Calendar.YEAR);
+    		int month = cal.get(Calendar.MONTH);
+    		int day = cal.get(Calendar.DAY_OF_MONTH);
+    		int era = cal.get(Calendar.ERA);
+    		if (year == 2 && month == 10 && era == 0) {
+    			if (day == 29 || day == 30) {
+        			return true;
+    			}
+    		}
+    		return false;
+    	} else {
+    		return false;
+    	}
     }
 
 }

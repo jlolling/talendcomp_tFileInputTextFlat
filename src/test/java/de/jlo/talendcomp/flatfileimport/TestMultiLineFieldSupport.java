@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.cimt.talendcomp.flatfileimport;
+package de.jlo.talendcomp.flatfileimport;
 
 import de.cimt.talendcomp.test.TalendFakeJob;
 
@@ -86,7 +86,7 @@ public class TestMultiLineFieldSupport extends TalendFakeJob {
 		int tos_count_tFileInputTextFlat_1 = 0;
 
 		// row1 ,
-		de.cimt.talendcomp.flatfileimport.Importer tFileInputTextFlat_1 = new de.cimt.talendcomp.flatfileimport.Importer();
+		de.jlo.talendcomp.flatfileimport.Importer tFileInputTextFlat_1 = new de.jlo.talendcomp.flatfileimport.Importer();
 		tFileInputTextFlat_1.setDebug(true);
 		tFileInputTextFlat_1
 				.setImportFile("/Volumes/Data/Talend/testdata/text/flat/output.csv");
@@ -106,9 +106,9 @@ public class TestMultiLineFieldSupport extends TalendFakeJob {
 		final class ImportHelper_tFileInputTextFlat_1 {
 
 			public void configureFields(
-					de.cimt.talendcomp.flatfileimport.Importer importer) {
+					de.jlo.talendcomp.flatfileimport.Importer importer) {
 
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("Column A", // columnName
 								"String", // type
 								true, // nullable
@@ -120,7 +120,7 @@ public class TestMultiLineFieldSupport extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("Column B", // columnName
 								"String", // type
 								true, // nullable
@@ -132,7 +132,7 @@ public class TestMultiLineFieldSupport extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("Column D", // columnName
 								"String", // type
 								true, // nullable
@@ -144,7 +144,7 @@ public class TestMultiLineFieldSupport extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("Column E", // columnName
 								"String", // type
 								true, // nullable
@@ -156,7 +156,7 @@ public class TestMultiLineFieldSupport extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("Column F", // columnName
 								"String", // type
 								true, // nullable
@@ -171,7 +171,7 @@ public class TestMultiLineFieldSupport extends TalendFakeJob {
 			} // end of configureFields
 
 			public void fillOutputFlow(
-					de.cimt.talendcomp.flatfileimport.Importer importer,
+					de.jlo.talendcomp.flatfileimport.Importer importer,
 					row1Struct flow) throws Exception {
 				flow.ColumnA = importer.getStringAt(0, true);
 				flow.ColumnB = importer.getStringAt(1, true);

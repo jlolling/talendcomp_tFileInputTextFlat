@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.cimt.talendcomp.flatfileimport;
+package de.jlo.talendcomp.flatfileimport;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -42,7 +42,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 		int tos_count_tFileInputTextFlat_1 = 0;
 
 		// row1 ,
-		de.cimt.talendcomp.flatfileimport.Importer tFileInputTextFlat_1 = new de.cimt.talendcomp.flatfileimport.Importer();
+		de.jlo.talendcomp.flatfileimport.Importer tFileInputTextFlat_1 = new de.jlo.talendcomp.flatfileimport.Importer();
 		tFileInputTextFlat_1.setDebug(true);
 		tFileInputTextFlat_1
 				.setImportFile("/Volumes/Data/Talend/testdata/text/single_quota_issue/TRANS_DAILY_20160125.txt");
@@ -62,9 +62,9 @@ public class TestQuotaIssue extends TalendFakeJob {
 		final class ImportHelper_tFileInputTextFlat_1 {
 
 			public void configureFields(
-					de.cimt.talendcomp.flatfileimport.Importer importer) {
+					de.jlo.talendcomp.flatfileimport.Importer importer) {
 
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("MONTH", // columnName
 								"String", // type
 								true, // nullable
@@ -76,7 +76,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("CHIP", // columnName
 								"String", // type
 								true, // nullable
@@ -88,7 +88,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("SKU", // columnName
 								"String", // type
 								true, // nullable
@@ -100,7 +100,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("CARDTECH", // columnName
 								"String", // type
 								true, // nullable
@@ -112,7 +112,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("TRANSRC", // columnName
 								"String", // type
 								true, // nullable
@@ -124,7 +124,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("LOGICMOD", // columnName
 								"String", // type
 								true, // nullable
@@ -136,7 +136,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("INTRCHG_FEE", // columnName
 								"String", // type
 								true, // nullable
@@ -148,7 +148,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("CAT_CODE", // columnName
 								"String", // type
 								true, // nullable
@@ -160,7 +160,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("FULLSRC", // columnName
 								"String", // type
 								true, // nullable
@@ -172,7 +172,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("TRANINS", // columnName
 								"String", // type
 								true, // nullable
@@ -184,7 +184,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("TRANFXF", // columnName
 								"String", // type
 								true, // nullable
@@ -196,7 +196,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("TRANITEM", // columnName
 								"String", // type
 								true, // nullable
@@ -208,7 +208,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("Column0", // columnName
 								"String", // type
 								true, // nullable
@@ -220,7 +220,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ACCTNBR", // columnName
 								"String", // type
 								true, // nullable
@@ -232,7 +232,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("TRANDTE", // columnName
 								"String", // type
 								true, // nullable
@@ -244,7 +244,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("TRANCDE", // columnName
 								"String", // type
 								true, // nullable
@@ -256,7 +256,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("TRANAMT", // columnName
 								"String", // type
 								true, // nullable
@@ -268,7 +268,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("POSTDTE", // columnName
 								"String", // type
 								true, // nullable
@@ -280,7 +280,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("DBANAME", // columnName
 								"String", // type
 								true, // nullable
@@ -292,7 +292,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("DBALOC", // columnName
 								"String", // type
 								true, // nullable
@@ -304,7 +304,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("DBACNTRY", // columnName
 								"String", // type
 								true, // nullable
@@ -316,7 +316,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("TRANMER", // columnName
 								"String", // type
 								true, // nullable
@@ -328,7 +328,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("TRANMCC", // columnName
 								"String", // type
 								true, // nullable
@@ -340,7 +340,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("PLANNBR", // columnName
 								"String", // type
 								true, // nullable
@@ -352,7 +352,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("TRANTYP", // columnName
 								"String", // type
 								true, // nullable
@@ -364,7 +364,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("TRANGRP", // columnName
 								"String", // type
 								true, // nullable
@@ -376,7 +376,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 								false, // ignoreMissing
 								null, // defaultValue
 								null)); // alternative
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("LOGO", // columnName
 								"String", // type
 								true, // nullable
@@ -391,7 +391,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 			} // end of configureFields
 
 			public void fillOutputFlow(
-					de.cimt.talendcomp.flatfileimport.Importer importer,
+					de.jlo.talendcomp.flatfileimport.Importer importer,
 					row1Struct flow) throws Exception {
 				flow.MONTH = importer.getStringAt(0, true);
 				flow.CHIP = importer.getStringAt(1, true);

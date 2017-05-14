@@ -13,11 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.cimt.talendcomp.flatfileimport;
+package de.jlo.talendcomp.flatfileimport;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+
+import de.jlo.talendcomp.flatfileimport.CSVFieldTokenizer;
+import de.jlo.talendcomp.flatfileimport.CSVFileDatasetProvider;
+import de.jlo.talendcomp.flatfileimport.DatasetProvider;
+import de.jlo.talendcomp.flatfileimport.FieldDescription;
+import de.jlo.talendcomp.flatfileimport.ImportAttributes;
+import de.jlo.talendcomp.flatfileimport.Importer;
+import de.jlo.talendcomp.flatfileimport.ParserException;
 
 
 public class TestImport {
@@ -229,7 +237,7 @@ public class TestImport {
 	public static void testTalendCode() throws Exception {
 		Map<String, Object> globalMap = new HashMap<String, Object>();
 		row2Struct row2 = null;
-		de.cimt.talendcomp.flatfileimport.Importer tFileInputTextFlat_2 = new de.cimt.talendcomp.flatfileimport.Importer();
+		de.jlo.talendcomp.flatfileimport.Importer tFileInputTextFlat_2 = new de.jlo.talendcomp.flatfileimport.Importer();
 		tFileInputTextFlat_2.setDebug(false);
 		tFileInputTextFlat_2
 				.setImportFile("/private/var/testdata/text/different_schemas/test2.txt");
@@ -242,123 +250,123 @@ public class TestImport {
 		final class ImportHelper_tFileInputTextFlat_2 {
 
 			public void configureFields(
-					de.cimt.talendcomp.flatfileimport.Importer importer) {
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+					de.jlo.talendcomp.flatfileimport.Importer importer) {
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_MAG", "String", true, 0,
 								0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_KLT", "String", true, 1,
 								0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_PLT", "String", true, 2,
 								0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_PRAC", "String", true, 3,
 								0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("NAZWA", "String", true, 4, 0,
 								"dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("SKROT", "String", true, 5, 0,
 								"dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_W", "String", true, 6, 0,
 								"dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_P", "String", true, 7, 0,
 								"dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("MIASTO", "String", true, 8,
 								0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("KOD", "String", true, 9, 0,
 								"dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ULICA", "String", true, 10,
 								0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("NR_LOK", "String", true, 11,
 								0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("NIP", "String", true, 12, 0,
 								"dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("TEL", "String", true, 13, 0,
 								"dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("KOM", "String", true, 14, 0,
 								"dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("FAX", "String", true, 15, 0,
 								"dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("EMAIL", "String", true, 16,
 								0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("RABAT", "Float", true, 17, 0,
 								"dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_FOR_PLT", "String", true,
 								18, 0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("TER_PLT", "Integer", true,
 								19, 0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_CENNIK", "String", true,
 								20, 0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_GC_KLT", "String", true,
 								21, 0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_GL_KLT", "String", true,
 								22, 0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_GR_KLT", "String", true,
 								23, 0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_GRX_KLT", "String", true,
 								24, 0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("LIM_KRED", "Float", true, 25,
 								0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("SALDO_PLT", "Float", true,
 								26, 0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("LIM_PRZET", "Float", true,
 								27, 0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("SALDO_PRZET", "Float", true,
 								28, 0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("WSK_BLOK", "Integer", true,
 								29, 0, "en", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_TYP_KLT", "String", true,
 								30, 0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_KAT_KLT", "String", true,
 								31, 0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_SIEC", "String", true, 32,
 								0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_POW", "String", true, 33,
 								0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ID_ST_KLT", "String", true,
 								34, 0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("ST_MOB", "Integer", true, 35,
 								0, "dd-MM-yyyy", null, true, true, null, null));
-				importer.addFieldDescription(de.cimt.talendcomp.flatfileimport.FieldDescription
+				importer.addFieldDescription(de.jlo.talendcomp.flatfileimport.FieldDescription
 						.createDelimited("WSK_DOMYSLNY", "Integer",
 								true, 36, 0, "dd-MM-yyyy", null, true,
 								true, null, null));
 			} // end of configureFields
 
 			public void fillOutputFlow(
-					de.cimt.talendcomp.flatfileimport.Importer importer,
+					de.jlo.talendcomp.flatfileimport.Importer importer,
 					row2Struct flow) throws Exception {
 				flow.ID_MAG = importer.getStringAt(0, true);
 				flow.ID_KLT = importer.getStringAt(1, true);

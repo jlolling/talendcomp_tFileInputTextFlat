@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <COMPONENT> 
-  <HEADER PLATEFORM="ALL" SERIAL="" VERSION="4.3" STATUS="PROD" COMPATIBILITY="ALL" AUTHOR="Jan Lolling" RELEASE_DATE="20170127" STARTABLE="true" HAS_CONDITIONAL_OUTPUTS="true"> 
+  <HEADER PLATEFORM="ALL" SERIAL="" VERSION="4.4" STATUS="PROD" COMPATIBILITY="ALL" AUTHOR="Jan Lolling" RELEASE_DATE="20170514" STARTABLE="true" HAS_CONDITIONAL_OUTPUTS="true"> 
     <SIGNATURE/> 
   </HEADER>  
   <FAMILIES> 
@@ -133,13 +133,13 @@
         <ITEM NAME="TRIM" FIELD="CHECK"/> 
       </ITEMS> 
     </PARAMETER>  
-    <PARAMETER NAME="RELEASE_LABEL_20170127" FIELD="LABEL" COLOR="0;0;0" NUM_ROW="900">
-      <DEFAULT>Release: 4.3 build at: 20170127</DEFAULT>
+    <PARAMETER NAME="RELEASE_LABEL_20170514" FIELD="LABEL" COLOR="0;0;0" NUM_ROW="900">
+      <DEFAULT>Release: 4.4 build at: 20170514</DEFAULT>
     </PARAMETER>
   </ADVANCED_PARAMETERS>  
   <CODEGENERATION> 
     <IMPORTS> 
-      <IMPORT NAME="cimt-talendcomp-flatfileimport" MODULE="cimt-talendcomp-flatfileimport-4.3.jar" REQUIRED="true"/>
+      <IMPORT NAME="jlo-talendcomp-flatfileimport" MODULE="jlo-talendcomp-flatfileimport-4.4.jar" REQUIRED="true"/>
     </IMPORTS> 
   </CODEGENERATION>  
   <RETURNS> 

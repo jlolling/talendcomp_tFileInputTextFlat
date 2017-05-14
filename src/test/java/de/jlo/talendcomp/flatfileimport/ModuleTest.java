@@ -1,4 +1,4 @@
-package de.cimt.talendcomp.flatfileimport;
+package de.jlo.talendcomp.flatfileimport;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,6 +6,9 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 
 import org.junit.Test;
+
+import de.jlo.talendcomp.flatfileimport.CSVFileDatasetProvider;
+import de.jlo.talendcomp.flatfileimport.ImportAttributes;
 
 public class ModuleTest {
 
