@@ -15,9 +15,12 @@
  */
 package de.jlo.talendcomp.flatfileimport;
 
-import de.cimt.talendcomp.test.TalendFakeJob;
+import java.util.HashMap;
+import java.util.Map;
 
-public class TestMultiLineFieldSupport extends TalendFakeJob {
+public class TestMultiLineFieldSupport {
+
+	private Map<String, Object> globalMap = new HashMap<String, Object>();
 
 	public static void main(String[] args) {
 		TestMultiLineFieldSupport test = new TestMultiLineFieldSupport();
@@ -76,12 +79,6 @@ public class TestMultiLineFieldSupport extends TalendFakeJob {
 		 */
 
 		row1Struct row1 = new row1Struct();
-
-		ok_Hash.put("tFileInputTextFlat_1", false);
-		start_Hash.put("tFileInputTextFlat_1",
-				System.currentTimeMillis());
-
-		currentComponent = "tFileInputTextFlat_1";
 
 		int tos_count_tFileInputTextFlat_1 = 0;
 
@@ -267,8 +264,6 @@ public class TestMultiLineFieldSupport extends TalendFakeJob {
 				 * [tFileInputTextFlat_1 main ] start
 				 */
 
-				currentComponent = "tFileInputTextFlat_1";
-
 				tos_count_tFileInputTextFlat_1++;
 
 				/**
@@ -285,9 +280,6 @@ public class TestMultiLineFieldSupport extends TalendFakeJob {
 		globalMap.put("tFileInputTextFlat_1_NB_REJECTED",
 				countRejects_tFileInputTextFlat_1);
 
-		ok_Hash.put("tFileInputTextFlat_1", true);
-		end_Hash.put("tFileInputTextFlat_1", System.currentTimeMillis());
-		
 	}
 
 }

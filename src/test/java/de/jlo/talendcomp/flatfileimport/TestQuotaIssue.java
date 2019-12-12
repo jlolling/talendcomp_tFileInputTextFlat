@@ -15,14 +15,13 @@
  */
 package de.jlo.talendcomp.flatfileimport;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
-import de.cimt.talendcomp.test.TalendFakeJob;
+public class TestQuotaIssue {
 
-public class TestQuotaIssue extends TalendFakeJob {
-
+	private Map<String, Object> globalMap = new HashMap<String, Object>();
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		TestQuotaIssue test = new TestQuotaIssue();
@@ -37,8 +36,6 @@ public class TestQuotaIssue extends TalendFakeJob {
 	public void test() throws Exception {
 		row1Struct row1 = new row1Struct();
 		
-		currentComponent = "tFileInputTextFlat_1";
-
 		int tos_count_tFileInputTextFlat_1 = 0;
 
 		// row1 ,
@@ -501,8 +498,6 @@ public class TestQuotaIssue extends TalendFakeJob {
 				 * [tFileInputTextFlat_1 main ] start
 				 */
 
-				currentComponent = "tFileInputTextFlat_1";
-
 				tos_count_tFileInputTextFlat_1++;
 				
 			}
@@ -512,7 +507,7 @@ public class TestQuotaIssue extends TalendFakeJob {
 	}
 	
 	
-	public static class row1Struct implements routines.system.IPersistableRow<row1Struct> {
+	public static class row1Struct {
 		final static byte[] commonByteArrayLock_COMPDEV_test_tFileInputTextFlat_issue_tab = new byte[0];
 		static byte[] commonByteArray_COMPDEV_test_tFileInputTextFlat_issue_tab = new byte[0];
 
@@ -676,227 +671,6 @@ public class TestQuotaIssue extends TalendFakeJob {
 
 		public String getLOGO() {
 			return this.LOGO;
-		}
-
-		private String readString(ObjectInputStream dis) throws IOException {
-			String strReturn = null;
-			int length = 0;
-			length = dis.readInt();
-			if (length == -1) {
-				strReturn = null;
-			} else {
-				if (length > commonByteArray_COMPDEV_test_tFileInputTextFlat_issue_tab.length) {
-					if (length < 1024 && commonByteArray_COMPDEV_test_tFileInputTextFlat_issue_tab.length == 0) {
-						commonByteArray_COMPDEV_test_tFileInputTextFlat_issue_tab = new byte[1024];
-					} else {
-						commonByteArray_COMPDEV_test_tFileInputTextFlat_issue_tab = new byte[2 * length];
-					}
-				}
-				dis.readFully(commonByteArray_COMPDEV_test_tFileInputTextFlat_issue_tab, 0, length);
-				strReturn = new String(commonByteArray_COMPDEV_test_tFileInputTextFlat_issue_tab, 0, length,
-						utf8Charset);
-			}
-			return strReturn;
-		}
-
-		private void writeString(String str, ObjectOutputStream dos) throws IOException {
-			if (str == null) {
-				dos.writeInt(-1);
-			} else {
-				byte[] byteArray = str.getBytes(utf8Charset);
-				dos.writeInt(byteArray.length);
-				dos.write(byteArray);
-			}
-		}
-
-		@Override
-		public void readData(ObjectInputStream dis) {
-
-			synchronized (commonByteArrayLock_COMPDEV_test_tFileInputTextFlat_issue_tab) {
-
-				try {
-
-					int length = 0;
-
-					this.MONTH = readString(dis);
-
-					this.CHIP = readString(dis);
-
-					this.SKU = readString(dis);
-
-					this.CARDTECH = readString(dis);
-
-					this.TRANSRC = readString(dis);
-
-					this.LOGICMOD = readString(dis);
-
-					this.INTRCHG_FEE = readString(dis);
-
-					this.CAT_CODE = readString(dis);
-
-					this.FULLSRC = readString(dis);
-
-					this.TRANINS = readString(dis);
-
-					this.TRANFXF = readString(dis);
-
-					this.TRANITEM = readString(dis);
-
-					this.Column0 = readString(dis);
-
-					this.ACCTNBR = readString(dis);
-
-					this.TRANDTE = readString(dis);
-
-					this.TRANCDE = readString(dis);
-
-					this.TRANAMT = readString(dis);
-
-					this.POSTDTE = readString(dis);
-
-					this.DBANAME = readString(dis);
-
-					this.DBALOC = readString(dis);
-
-					this.DBACNTRY = readString(dis);
-
-					this.TRANMER = readString(dis);
-
-					this.TRANMCC = readString(dis);
-
-					this.PLANNBR = readString(dis);
-
-					this.TRANTYP = readString(dis);
-
-					this.TRANGRP = readString(dis);
-
-					this.LOGO = readString(dis);
-
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-
-				}
-
-			}
-
-		}
-
-		@Override
-		public void writeData(ObjectOutputStream dos) {
-			try {
-
-				// String
-
-				writeString(this.MONTH, dos);
-
-				// String
-
-				writeString(this.CHIP, dos);
-
-				// String
-
-				writeString(this.SKU, dos);
-
-				// String
-
-				writeString(this.CARDTECH, dos);
-
-				// String
-
-				writeString(this.TRANSRC, dos);
-
-				// String
-
-				writeString(this.LOGICMOD, dos);
-
-				// String
-
-				writeString(this.INTRCHG_FEE, dos);
-
-				// String
-
-				writeString(this.CAT_CODE, dos);
-
-				// String
-
-				writeString(this.FULLSRC, dos);
-
-				// String
-
-				writeString(this.TRANINS, dos);
-
-				// String
-
-				writeString(this.TRANFXF, dos);
-
-				// String
-
-				writeString(this.TRANITEM, dos);
-
-				// String
-
-				writeString(this.Column0, dos);
-
-				// String
-
-				writeString(this.ACCTNBR, dos);
-
-				// String
-
-				writeString(this.TRANDTE, dos);
-
-				// String
-
-				writeString(this.TRANCDE, dos);
-
-				// String
-
-				writeString(this.TRANAMT, dos);
-
-				// String
-
-				writeString(this.POSTDTE, dos);
-
-				// String
-
-				writeString(this.DBANAME, dos);
-
-				// String
-
-				writeString(this.DBALOC, dos);
-
-				// String
-
-				writeString(this.DBACNTRY, dos);
-
-				// String
-
-				writeString(this.TRANMER, dos);
-
-				// String
-
-				writeString(this.TRANMCC, dos);
-
-				// String
-
-				writeString(this.PLANNBR, dos);
-
-				// String
-
-				writeString(this.TRANTYP, dos);
-
-				// String
-
-				writeString(this.TRANGRP, dos);
-
-				// String
-
-				writeString(this.LOGO, dos);
-
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-
 		}
 
 		@Override

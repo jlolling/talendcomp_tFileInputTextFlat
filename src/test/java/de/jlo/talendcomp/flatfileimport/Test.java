@@ -1,8 +1,6 @@
 package de.jlo.talendcomp.flatfileimport;
 
-import de.cimt.talendcomp.test.TalendFakeJob;
-
-public class Test extends TalendFakeJob {
+public class Test {
 	
 	public static void main(String[] args) {
 		Test t = new Test();
