@@ -133,7 +133,7 @@
 <%    } %>
 	<%=cid%>.setFileCharset(<%=encoding%>);
 <%    if (useEnclosures && enclosure != null && enclosure.isEmpty() == false) { %>
-	<%=cid%>.setIgnoreLinebreakInEnclosures(!<%=splitRowFirst%>);
+	<%=cid%>.setIgnoreLinebreakInEnclosures(<%=splitRowFirst%>==false);
 	<%=cid%>.setEnclosure(<%=enclosure%>);
 	<%=cid%>.allowEnclosureInFieldContent(<%=allowEnclosureInText%>);
 <%    } %>
