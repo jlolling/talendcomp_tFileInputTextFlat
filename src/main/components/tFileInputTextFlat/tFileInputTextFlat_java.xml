@@ -8,7 +8,7 @@
     <FAMILY>File/Input</FAMILY> 
   </FAMILIES>  
   <DOCUMENTATION> 
-    <URL/> 
+    <URL>https://github.com/jlolling/talendcomp_tFileInputTextFlat</URL> 
   </DOCUMENTATION>  
   <CONNECTORS> 
     <CONNECTOR CTYPE="FLOW" MAX_INPUT="0" MAX_OUTPUT="1"/>  
