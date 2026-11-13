@@ -164,9 +164,9 @@ public class GenericDateUtil {
 			timePatternList = new ArrayList<String>();
 			timePatternList.add(" mm''ss'\"'");
 			timePatternList.add(" mm''ss'“'");
-			timePatternList.add(" mm''ss'�?'");
+			timePatternList.add(" mm''ss'″'");
 			timePatternList.add(" mm'‘'ss'“'");
-			timePatternList.add(" mm'’'ss'�?'");
+			timePatternList.add(" mm'’'ss'″'");
 			timePatternList.add(" mm'′'ss'″'");
 			timePatternList.add(" HH'h'mm'm'ss's'");
 			timePatternList.add(" HH'h'mm'm'");
