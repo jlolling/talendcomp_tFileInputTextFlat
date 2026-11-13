@@ -1,3 +1,18 @@
+/**
+ * Copyright 2025 Jan Lolling jan.lolling@gmail.com
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.jlo.talendcomp.flatfileimport;
 
 import java.text.ParseException;
@@ -149,9 +164,9 @@ public class GenericDateUtil {
 			timePatternList = new ArrayList<String>();
 			timePatternList.add(" mm''ss'\"'");
 			timePatternList.add(" mm''ss'“'");
-			timePatternList.add(" mm''ss'”'");
+			timePatternList.add(" mm''ss'�?'");
 			timePatternList.add(" mm'‘'ss'“'");
-			timePatternList.add(" mm'’'ss'”'");
+			timePatternList.add(" mm'’'ss'�?'");
 			timePatternList.add(" mm'′'ss'″'");
 			timePatternList.add(" HH'h'mm'm'ss's'");
 			timePatternList.add(" HH'h'mm'm'");
@@ -172,6 +187,14 @@ public class GenericDateUtil {
 		
 		public Date parseDate(String text, String ... userPattern) throws ParseException {
 			return parseDate(text, null, userPattern);
+		}
+		
+		private boolean checkTextLength(String pattern, String content) {
+			if (pattern.contains("MMMM") == false && pattern.length() < content.length()) {
+				return false;
+			} else {
+				return true;
+			}
 		}
 
 		public Date parseDate(String text, Locale locale, String ... userPattern) throws ParseException {
@@ -194,6 +217,9 @@ public class GenericDateUtil {
 					if (pattern != null) {
 						sdf.applyPattern(pattern.trim());
 						try {
+							if (lenient == false && checkTextLength(pattern, text) == false) {
+								continue;
+							}
 							dateValue = sdf.parse(text);
 							// if we continue here the pattern fits
 							// now we know the date is correct, lets try the time part:
@@ -243,8 +269,13 @@ public class GenericDateUtil {
 						sdf.applyPattern(pattern.trim());
 						try {
 							timeValue = sdf.parse(text);
+							// take care we remove the days
+							Calendar c = Calendar.getInstance(getUTCTimeZone());
+							c.setTime(timeValue);
+							c.set(Calendar.DAY_OF_YEAR, 1);
+							c.set(Calendar.YEAR, 1970);
 							// if we continue here the pattern fits
-							return timeValue;
+							return c.getTime();
 						} catch (ParseException e) {
 							// the pattern obviously does not work
 							continue;

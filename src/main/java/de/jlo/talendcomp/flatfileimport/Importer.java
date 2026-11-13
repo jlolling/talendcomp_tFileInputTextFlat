@@ -362,9 +362,23 @@ public final class Importer {
     	return value;
 	}
 	
+	private boolean isNull(Object value) {
+		if (value == null) {
+			return true;
+		} else if (value == FieldTokenizer.NULL) {
+			return true;
+		} else if (value instanceof String) {
+			String s = (String) value;
+			if (s.trim().equalsIgnoreCase("null")) {
+				return true;
+			} 
+		}
+		return false;
+	}
+	
 	public Object getObjectAt(int index, boolean nullable) {
 		Object value = getData(index);
-		if (value == FieldTokenizer.NULL) {
+		if (isNull(value)) {
 			return nullable ? null : new Object();
 		} else {
 			return value;
@@ -373,7 +387,7 @@ public final class Importer {
 	
 	public String getStringAt(int index, boolean nullable) {
 		Object value = getData(index);
-		if (value == FieldTokenizer.NULL) {
+		if (isNull(value)) {
 			return nullable ? null : "";
 		} else {
 			return (String) value;
@@ -382,7 +396,7 @@ public final class Importer {
 
 	public Character getCharAt(int index, boolean nullable) {
 		Object value = getData(index);
-		if (value == FieldTokenizer.NULL) {
+		if (isNull(value)) {
 			return nullable ? null : ' ';
 		} else {
 			return (Character) value;
@@ -391,7 +405,7 @@ public final class Importer {
 
 	public Integer getIntegerAt(int index, boolean nullable) {
 		Object value = getData(index);
-		if (value == FieldTokenizer.NULL) {
+		if (isNull(value)) {
 			return nullable ? null : 0;
 		} else {
 			return (Integer) value;
@@ -400,7 +414,7 @@ public final class Importer {
 
 	public Short getShortAt(int index, boolean nullable) {
 		Object value = getData(index);
-		if (value == FieldTokenizer.NULL) {
+		if (isNull(value)) {
 			return nullable ? null : (short) 0;
 		} else {
 			return (Short) value;
@@ -409,7 +423,7 @@ public final class Importer {
 
 	public Long getLongAt(int index, boolean nullable) {
 		Object value = getData(index);
-		if (value == FieldTokenizer.NULL) {
+		if (isNull(value)) {
 			return nullable ? null : 0l;
 		} else {
 			return (Long) value;
@@ -418,7 +432,7 @@ public final class Importer {
 
 	public Double getDoubleAt(int index, boolean nullable) {
 		Object value = getData(index);
-		if (value == FieldTokenizer.NULL) {
+		if (isNull(value)) {
 			return nullable ? null : 0d;
 		} else {
 			return (Double) value;
@@ -427,7 +441,7 @@ public final class Importer {
 
 	public Float getFloatAt(int index, boolean nullable) {
 		Object value = getData(index);
-		if (value == FieldTokenizer.NULL) {
+		if (isNull(value)) {
 			return nullable ? null : 0f;
 		} else {
 			return (Float) value;
@@ -436,7 +450,7 @@ public final class Importer {
 
 	public Boolean getBooleanAt(int index, boolean nullable) {
 		Object value = getData(index);
-		if (value == FieldTokenizer.NULL) {
+		if (isNull(value)) {
 			return nullable ? null : false;
 		} else {
 			return (Boolean) value;
@@ -445,7 +459,7 @@ public final class Importer {
 
 	public BigDecimal getBigDecimalAt(int index, boolean nullable) {
 		Object value = getData(index);
-		if (value == FieldTokenizer.NULL) {
+		if (isNull(value)) {
 			return nullable ? null : BigDecimal.ZERO;
 		} else {
 			return (BigDecimal) value;
@@ -454,7 +468,7 @@ public final class Importer {
 
 	public Date getDateAt(int index, boolean nullable) {
 		Object value = getData(index);
-		if (value == FieldTokenizer.NULL) {
+		if (isNull(value)) {
 			return nullable ? null : new Date(0l);
 		} else {
 			return (Date) value;
@@ -463,7 +477,7 @@ public final class Importer {
 	
 	public Timestamp getTimestampAt(int index, boolean nullable) {
 		Object value = getData(index);
-		if (value == FieldTokenizer.NULL) {
+		if (isNull(value)) {
 			return nullable ? null : new Timestamp(0l);
 		} else {
 			return (Timestamp) value;
